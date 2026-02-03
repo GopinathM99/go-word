@@ -1,0 +1,1011 @@
+/* =============================================================================
+   Track Changes Styles
+   ============================================================================= */
+
+/* =============================================================================
+   CSS Custom Properties - Author Color System
+   ============================================================================= */
+
+:root {
+  /* Predefined author colors for distinct visibility */
+  --author-color-1: #2E7D32; /* Green */
+  --author-color-2: #C62828; /* Red */
+  --author-color-3: #1565C0; /* Blue */
+  --author-color-4: #6A1B9A; /* Purple */
+  --author-color-5: #E65100; /* Orange */
+  --author-color-6: #00838F; /* Teal */
+  --author-color-7: #AD1457; /* Pink */
+  --author-color-8: #4527A0; /* Deep Purple */
+  --author-color-9: #00695C; /* Dark Teal */
+  --author-color-10: #BF360C; /* Deep Orange */
+
+  /* Track changes specific colors */
+  --tc-insert-color: #2E7D32;
+  --tc-delete-color: #C62828;
+  --tc-format-color: #1565C0;
+  --tc-move-color: #6A1B9A;
+
+  /* UI colors */
+  --tc-toolbar-bg: #f8f9fa;
+  --tc-toolbar-border: #e0e0e0;
+  --tc-button-hover: #e8e8e8;
+  --tc-button-active: #d0d0d0;
+  --tc-pane-bg: #ffffff;
+  --tc-pane-border: #e0e0e0;
+  --tc-pane-header-bg: #f5f5f5;
+  --tc-selected-bg: #e3f2fd;
+  --tc-selected-border: #2196f3;
+}
+
+/* =============================================================================
+   Track Changes Toolbar
+   ============================================================================= */
+
+.track-changes-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--tc-toolbar-bg);
+  border-bottom: 1px solid var(--tc-toolbar-border);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.tc-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  border-right: 1px solid var(--tc-toolbar-border);
+}
+
+.tc-toolbar-group:last-child {
+  border-right: none;
+}
+
+.tc-toolbar-group.tc-toolbar-right {
+  margin-left: auto;
+  border-right: none;
+  border-left: 1px solid var(--tc-toolbar-border);
+}
+
+/* Toolbar Buttons */
+.tc-toolbar-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.tc-toolbar-button:hover:not(:disabled) {
+  background: var(--tc-button-hover);
+  border-color: var(--tc-toolbar-border);
+}
+
+.tc-toolbar-button:active:not(:disabled) {
+  background: var(--tc-button-active);
+}
+
+.tc-toolbar-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tc-toolbar-button.active {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  color: #1565c0;
+}
+
+/* Toggle Button with Status */
+.tc-toggle-button {
+  min-width: 140px;
+}
+
+.tc-status-indicator {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+}
+
+.tc-status-indicator.on {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.tc-status-indicator.off {
+  background: #e0e0e0;
+  color: #757575;
+}
+
+/* Accept/Reject Buttons */
+.tc-accept-button:hover:not(:disabled) {
+  background: #e8f5e9;
+  border-color: #4caf50;
+  color: #2e7d32;
+}
+
+.tc-reject-button:hover:not(:disabled) {
+  background: #ffebee;
+  border-color: #f44336;
+  color: #c62828;
+}
+
+/* Navigation Buttons */
+.tc-nav-button {
+  padding: 6px 8px;
+  min-width: 32px;
+  justify-content: center;
+}
+
+.tc-nav-position {
+  font-size: 12px;
+  color: #666;
+  min-width: 70px;
+  text-align: center;
+}
+
+/* Icons */
+.tc-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.tc-icon-accept {
+  color: #2e7d32;
+}
+
+.tc-icon-reject {
+  color: #c62828;
+}
+
+/* Dropdown */
+.tc-dropdown {
+  position: relative;
+}
+
+.tc-dropdown-button {
+  padding-right: 8px;
+}
+
+.tc-dropdown-arrow {
+  font-size: 10px;
+  color: #666;
+  margin-left: 2px;
+}
+
+.tc-dropdown-arrow-button {
+  padding: 6px 8px;
+  min-width: auto;
+}
+
+.tc-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid var(--tc-toolbar-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  min-width: 200px;
+  padding: 4px 0;
+  z-index: 1000;
+}
+
+.tc-dropdown-menu-right {
+  left: auto;
+  right: 0;
+}
+
+.tc-dropdown-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  position: relative;
+}
+
+.tc-dropdown-item:hover:not(:disabled) {
+  background: #f5f5f5;
+}
+
+.tc-dropdown-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tc-dropdown-item.selected {
+  background: #e3f2fd;
+}
+
+.tc-dropdown-item-label {
+  font-weight: 500;
+  color: #333;
+  font-size: 13px;
+}
+
+.tc-dropdown-item-description {
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.tc-dropdown-item-check {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #2196f3;
+  font-weight: bold;
+}
+
+/* Button Label */
+.tc-button-label {
+  font-weight: 500;
+}
+
+/* =============================================================================
+   Reviewing Pane
+   ============================================================================= */
+
+.reviewing-pane {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 100vh;
+  background: var(--tc-pane-bg);
+  border-left: 1px solid var(--tc-pane-border);
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  z-index: 100;
+}
+
+/* Pane Header */
+.reviewing-pane-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--tc-pane-header-bg);
+  border-bottom: 1px solid var(--tc-pane-border);
+  gap: 8px;
+}
+
+.reviewing-pane-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.reviewing-pane-count {
+  font-size: 12px;
+  color: #666;
+  margin-left: auto;
+}
+
+.reviewing-pane-close {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: all 0.15s ease;
+}
+
+.reviewing-pane-close:hover {
+  background: var(--tc-button-hover);
+  color: #333;
+}
+
+.reviewing-pane-close svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Pane Filters */
+.reviewing-pane-filters {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--tc-pane-border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reviewing-pane-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.reviewing-pane-search .search-icon {
+  position: absolute;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  color: #999;
+  pointer-events: none;
+}
+
+.reviewing-pane-search input {
+  width: 100%;
+  padding: 8px 32px;
+  border: 1px solid var(--tc-pane-border);
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.reviewing-pane-search input:focus {
+  border-color: #2196f3;
+}
+
+.reviewing-pane-search input::placeholder {
+  color: #999;
+}
+
+.reviewing-pane-search .search-clear {
+  position: absolute;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+}
+
+.reviewing-pane-search .search-clear:hover {
+  background: var(--tc-button-hover);
+  color: #333;
+}
+
+.reviewing-pane-search .search-clear svg {
+  width: 12px;
+  height: 12px;
+}
+
+.reviewing-pane-filter-row {
+  display: flex;
+  gap: 8px;
+}
+
+.reviewing-pane-filter-row select {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--tc-pane-border);
+  border-radius: 4px;
+  font-size: 12px;
+  background: white;
+  cursor: pointer;
+  outline: none;
+}
+
+.reviewing-pane-filter-row select:focus {
+  border-color: #2196f3;
+}
+
+/* Pane Content */
+.reviewing-pane-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+/* Empty State */
+.reviewing-pane-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: #666;
+}
+
+.reviewing-pane-empty .empty-icon {
+  width: 48px;
+  height: 48px;
+  color: #ccc;
+  margin-bottom: 16px;
+}
+
+.reviewing-pane-empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Revision Groups */
+.revision-group {
+  margin-bottom: 8px;
+}
+
+.revision-group-header {
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #fafafa;
+  border-bottom: 1px solid var(--tc-pane-border);
+}
+
+/* Revision Items */
+.revision-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 16px;
+  gap: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s ease;
+}
+
+.revision-item:hover {
+  background: #f8f8f8;
+}
+
+.revision-item.selected {
+  background: var(--tc-selected-bg);
+  border-left: 3px solid var(--tc-selected-border);
+  padding-left: 13px;
+}
+
+.revision-item:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px #2196f3;
+}
+
+/* Revision Type Icon */
+.revision-item-type {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.revision-type-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.revision-type-insert {
+  color: var(--tc-insert-color);
+}
+
+.revision-type-delete {
+  color: var(--tc-delete-color);
+}
+
+.revision-type-format {
+  color: var(--tc-format-color);
+}
+
+.revision-type-move {
+  color: var(--tc-move-color);
+}
+
+/* Revision Content */
+.revision-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.revision-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.revision-author {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.revision-time {
+  font-size: 11px;
+  color: #999;
+}
+
+.revision-item-type-label {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.revision-item-preview {
+  font-size: 12px;
+  color: #555;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.preview-deleted {
+  text-decoration: line-through;
+  color: var(--tc-delete-color);
+}
+
+.preview-inserted {
+  text-decoration: underline;
+  color: var(--tc-insert-color);
+}
+
+/* Revision Actions */
+.revision-item-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.revision-item:hover .revision-item-actions,
+.revision-item.selected .revision-item-actions {
+  opacity: 1;
+}
+
+.revision-action-button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: all 0.15s ease;
+}
+
+.revision-action-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.revision-action-button.accept:hover {
+  background: #e8f5e9;
+  color: var(--tc-insert-color);
+}
+
+.revision-action-button.reject:hover {
+  background: #ffebee;
+  color: var(--tc-delete-color);
+}
+
+/* Pane Footer */
+.reviewing-pane-footer {
+  padding: 10px 16px;
+  border-top: 1px solid var(--tc-pane-border);
+  background: var(--tc-pane-header-bg);
+}
+
+.revision-summary {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.summary-item .revision-type-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* =============================================================================
+   Revision Markers (Inline Document Markup)
+   ============================================================================= */
+
+.revision-marker {
+  cursor: pointer;
+  position: relative;
+}
+
+/* Insertion: underline + colored text */
+.revision-insert {
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: 1px;
+}
+
+/* Deletion: strikethrough */
+.revision-delete {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  opacity: 0.8;
+}
+
+/* Format change: subtle background + left border indicator */
+.revision-format {
+  border-left: 2px solid currentColor;
+  padding-left: 2px;
+}
+
+/* Move: double underline */
+.revision-move {
+  text-decoration: underline;
+  text-decoration-style: double;
+  text-decoration-thickness: 1px;
+}
+
+/* Move source (original location) */
+.revision-move-source .revision-marker {
+  opacity: 0.6;
+  text-decoration: line-through double;
+}
+
+/* Move destination (new location) */
+.revision-move-destination .revision-marker {
+  text-decoration: underline double;
+}
+
+/* Selected state */
+.revision-selected {
+  background: rgba(33, 150, 243, 0.15);
+  outline: 2px solid rgba(33, 150, 243, 0.3);
+  outline-offset: 1px;
+}
+
+/* Format change indicator bar (for paragraph-level changes) */
+.format-change-indicator {
+  position: absolute;
+  left: -16px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.format-change-indicator.selected {
+  width: 5px;
+  left: -18px;
+}
+
+/* =============================================================================
+   Revision Tooltip
+   ============================================================================= */
+
+.revision-tooltip {
+  position: fixed;
+  background: white;
+  border: 1px solid var(--tc-pane-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  min-width: 200px;
+  max-width: 300px;
+  z-index: 10000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+}
+
+.revision-tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.revision-tooltip-author {
+  font-weight: 600;
+}
+
+.revision-tooltip-type {
+  font-size: 11px;
+  color: #666;
+  padding: 2px 6px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.revision-tooltip-time {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.revision-tooltip-format,
+.revision-tooltip-move-info {
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.revision-tooltip-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+
+.revision-tooltip-action {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border: 1px solid var(--tc-pane-border);
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.revision-tooltip-action svg {
+  width: 14px;
+  height: 14px;
+}
+
+.revision-tooltip-action.accept:hover {
+  background: #e8f5e9;
+  border-color: #4caf50;
+  color: var(--tc-insert-color);
+}
+
+.revision-tooltip-action.reject:hover {
+  background: #ffebee;
+  border-color: #f44336;
+  color: var(--tc-delete-color);
+}
+
+/* =============================================================================
+   Dark Mode Support
+   ============================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tc-toolbar-bg: #2d2d2d;
+    --tc-toolbar-border: #444;
+    --tc-button-hover: #3a3a3a;
+    --tc-button-active: #4a4a4a;
+    --tc-pane-bg: #2d2d2d;
+    --tc-pane-border: #444;
+    --tc-pane-header-bg: #252525;
+    --tc-selected-bg: #1e3a5f;
+    --tc-selected-border: #42a5f5;
+  }
+
+  .track-changes-toolbar {
+    color: #e0e0e0;
+  }
+
+  .tc-toolbar-button {
+    color: #e0e0e0;
+  }
+
+  .tc-toolbar-button.active {
+    background: #1e3a5f;
+    border-color: #42a5f5;
+    color: #90caf9;
+  }
+
+  .tc-status-indicator.on {
+    background: #1b5e20;
+    color: #a5d6a7;
+  }
+
+  .tc-status-indicator.off {
+    background: #424242;
+    color: #9e9e9e;
+  }
+
+  .tc-dropdown-menu {
+    background: #333;
+    border-color: #555;
+  }
+
+  .tc-dropdown-item:hover:not(:disabled) {
+    background: #444;
+  }
+
+  .tc-dropdown-item.selected {
+    background: #1e3a5f;
+  }
+
+  .tc-dropdown-item-label {
+    color: #e0e0e0;
+  }
+
+  .tc-dropdown-item-description {
+    color: #999;
+  }
+
+  .reviewing-pane-title {
+    color: #e0e0e0;
+  }
+
+  .reviewing-pane-search input {
+    background: #333;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .reviewing-pane-filter-row select {
+    background: #333;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .revision-group-header {
+    background: #252525;
+    color: #999;
+  }
+
+  .revision-item {
+    border-bottom-color: #3a3a3a;
+  }
+
+  .revision-item:hover {
+    background: #363636;
+  }
+
+  .revision-item.selected {
+    background: var(--tc-selected-bg);
+  }
+
+  .revision-item-preview {
+    color: #bbb;
+  }
+
+  .revision-tooltip {
+    background: #333;
+    border-color: #555;
+  }
+
+  .revision-tooltip-type {
+    background: #444;
+    color: #bbb;
+  }
+
+  .revision-tooltip-action {
+    background: #333;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+}
+
+/* =============================================================================
+   Responsive Adjustments
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  .reviewing-pane {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .tc-button-label {
+    display: none;
+  }
+
+  .tc-toggle-button {
+    min-width: auto;
+  }
+
+  .tc-toggle-button .tc-button-label {
+    display: none;
+  }
+
+  .tc-pane-toggle .tc-button-label {
+    display: none;
+  }
+}
+
+/* =============================================================================
+   Print Styles
+   ============================================================================= */
+
+@media print {
+  .track-changes-toolbar,
+  .reviewing-pane {
+    display: none !important;
+  }
+
+  .revision-tooltip {
+    display: none !important;
+  }
+
+  /* Show revisions in print mode with basic styling */
+  .revision-insert {
+    color: #000 !important;
+    text-decoration: underline !important;
+  }
+
+  .revision-delete {
+    display: none !important;
+  }
+}
+
+/* =============================================================================
+   Accessibility - Reduced Motion
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-toolbar-button,
+  .revision-item,
+  .revision-item-actions,
+  .tc-dropdown-item,
+  .revision-tooltip-action,
+  .revision-action-button {
+    transition: none;
+  }
+}
+
+/* =============================================================================
+   High Contrast Mode Support
+   ============================================================================= */
+
+@media (prefers-contrast: high) {
+  .revision-marker {
+    outline: 1px solid currentColor;
+    outline-offset: 1px;
+  }
+
+  .revision-insert {
+    text-decoration-thickness: 2px;
+  }
+
+  .revision-delete {
+    text-decoration-thickness: 3px;
+  }
+
+  .tc-toolbar-button:focus-visible,
+  .revision-item:focus-visible,
+  .revision-action-button:focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: 2px;
+  }
+}

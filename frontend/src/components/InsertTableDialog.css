@@ -1,0 +1,253 @@
+.insert-table-dialog {
+  border: none;
+  border-radius: 8px;
+  padding: 0;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  min-width: 280px;
+}
+
+.insert-table-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.insert-table-dialog .dialog-content {
+  background: white;
+  border-radius: 8px;
+}
+
+.insert-table-dialog .dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.insert-table-dialog .dialog-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.insert-table-dialog .close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  line-height: 1;
+}
+
+.insert-table-dialog .close-button:hover {
+  color: #333;
+}
+
+/* Grid Picker Section */
+.insert-table-dialog .grid-picker-section {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.insert-table-dialog .grid-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.insert-table-dialog .grid-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.insert-table-dialog .grid-row {
+  display: flex;
+  gap: 2px;
+}
+
+.insert-table-dialog .grid-cell {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.insert-table-dialog .grid-cell:hover,
+.insert-table-dialog .grid-cell.hovered {
+  background: #4a86e8;
+  border-color: #3a76d8;
+}
+
+.insert-table-dialog .manual-input-link {
+  background: none;
+  border: none;
+  color: #4a86e8;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+  padding: 8px;
+}
+
+.insert-table-dialog .manual-input-link:hover {
+  color: #3a76d8;
+}
+
+/* Manual Input Section */
+.insert-table-dialog .manual-input-section {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.insert-table-dialog .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.insert-table-dialog .input-group label {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.insert-table-dialog .input-group input[type="number"] {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.insert-table-dialog .input-group input[type="number"]:focus {
+  outline: none;
+  border-color: #4a86e8;
+  box-shadow: 0 0 0 2px rgba(74, 134, 232, 0.2);
+}
+
+.insert-table-dialog .width-options {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.insert-table-dialog .width-options label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.insert-table-dialog .width-input {
+  width: 120px;
+}
+
+.insert-table-dialog .dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.insert-table-dialog .back-button {
+  padding: 8px 16px;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.insert-table-dialog .back-button:hover {
+  background: #e0e0e0;
+}
+
+.insert-table-dialog .insert-button {
+  padding: 8px 20px;
+  background: #4a86e8;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.insert-table-dialog .insert-button:hover {
+  background: #3a76d8;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .insert-table-dialog .dialog-content {
+    background: #2d2d2d;
+  }
+
+  .insert-table-dialog .dialog-header {
+    border-bottom-color: #444;
+  }
+
+  .insert-table-dialog .dialog-header h2 {
+    color: #eee;
+  }
+
+  .insert-table-dialog .close-button {
+    color: #aaa;
+  }
+
+  .insert-table-dialog .close-button:hover {
+    color: #eee;
+  }
+
+  .insert-table-dialog .grid-label {
+    color: #aaa;
+  }
+
+  .insert-table-dialog .grid-picker {
+    background: #383838;
+  }
+
+  .insert-table-dialog .grid-cell {
+    background: #444;
+    border-color: #555;
+  }
+
+  .insert-table-dialog .input-group label {
+    color: #eee;
+  }
+
+  .insert-table-dialog .input-group input[type="number"] {
+    background: #383838;
+    border-color: #555;
+    color: #eee;
+  }
+
+  .insert-table-dialog .dialog-actions {
+    border-top-color: #444;
+  }
+
+  .insert-table-dialog .back-button {
+    background: #383838;
+    border-color: #555;
+    color: #eee;
+  }
+
+  .insert-table-dialog .back-button:hover {
+    background: #444;
+  }
+}

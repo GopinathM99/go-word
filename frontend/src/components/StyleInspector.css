@@ -1,0 +1,223 @@
+.style-inspector {
+  padding: 12px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-left: 1px solid var(--border-color, #e0e0e0);
+  font-size: 13px;
+  overflow-y: auto;
+  height: 100%;
+  min-width: 280px;
+}
+
+.inspector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.inspector-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+}
+
+.clear-all-btn {
+  padding: 4px 8px;
+  font-size: 11px;
+  background: var(--danger-bg, #fee);
+  color: var(--danger-text, #c00);
+  border: 1px solid var(--danger-border, #fcc);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.clear-all-btn:hover {
+  background: var(--danger-bg-hover, #fdd);
+}
+
+.inspector-section {
+  margin-bottom: 16px;
+}
+
+.inspector-section h4 {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.section-header h4 {
+  margin: 0;
+}
+
+.clear-section-btn {
+  padding: 2px 6px;
+  font-size: 10px;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.clear-section-btn:hover {
+  background: var(--danger-bg, #fee);
+  color: var(--danger-text, #c00);
+  border-color: var(--danger-border, #fcc);
+}
+
+.applied-styles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.applied-style {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--bg-primary, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.applied-style:hover {
+  background: var(--bg-hover, #f0f0f0);
+  border-color: var(--primary-color, #0066cc);
+}
+
+.style-type {
+  font-size: 11px;
+  color: var(--text-secondary, #666);
+  min-width: 70px;
+}
+
+.style-name {
+  font-weight: 500;
+  color: var(--text-primary, #333);
+}
+
+.properties-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--bg-primary, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.property-row {
+  display: grid;
+  grid-template-columns: 100px 1fr 80px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border-light, #f0f0f0);
+}
+
+.property-row:last-child {
+  border-bottom: none;
+}
+
+.property-row:hover {
+  background: var(--bg-hover, #fafafa);
+}
+
+.property-label {
+  font-size: 12px;
+  color: var(--text-secondary, #666);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.property-value {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary, #333);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background 0.15s;
+}
+
+.property-value:hover {
+  background: var(--bg-hover, #e8e8e8);
+}
+
+.property-source {
+  font-size: 10px;
+  color: var(--text-tertiary, #888);
+  background: var(--bg-tertiary, #f0f0f0);
+  padding: 2px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.property-source:hover {
+  background: var(--bg-hover, #e0e0e0);
+}
+
+.property-source.direct {
+  background: var(--warning-bg, #fff8e6);
+  color: var(--warning-text, #996600);
+}
+
+.property-source.direct:hover {
+  background: var(--danger-bg, #fee);
+  color: var(--danger-text, #c00);
+}
+
+.color-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .style-inspector {
+    --bg-secondary: #2d2d2d;
+    --bg-primary: #1e1e1e;
+    --bg-tertiary: #3d3d3d;
+    --bg-hover: #3a3a3a;
+    --border-color: #444;
+    --border-light: #333;
+    --text-primary: #e0e0e0;
+    --text-secondary: #999;
+    --text-tertiary: #777;
+    --primary-color: #4da6ff;
+    --danger-bg: #3d1f1f;
+    --danger-bg-hover: #4a2525;
+    --danger-text: #ff6b6b;
+    --danger-border: #4a2020;
+    --warning-bg: #3d3520;
+    --warning-text: #ffc44d;
+  }
+}

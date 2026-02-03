@@ -1,0 +1,29 @@
+[package]
+name = "collab"
+version.workspace = true
+edition.workspace = true
+description = "Collaborative editing with CRDT-based operations"
+
+[features]
+default = []
+server = ["tokio-tungstenite", "tokio/net", "tokio/sync", "tokio/rt", "tokio/macros", "futures-util", "tracing", "trait-variant"]
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+thiserror.workspace = true
+chrono.workspace = true
+doc_model.workspace = true
+
+# Server dependencies (optional)
+tokio = { version = "1", features = ["sync"], optional = false }
+tokio-tungstenite = { version = "0.21", optional = true }
+futures-util = { version = "0.3", optional = true }
+tracing = { version = "0.1", optional = true }
+trait-variant = { version = "0.1", optional = true }
+
+[dev-dependencies]
+proptest.workspace = true
+tempfile = "3"
+tokio = { version = "1", features = ["full", "test-util"] }

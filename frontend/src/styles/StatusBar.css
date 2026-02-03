@@ -1,0 +1,605 @@
+/* =============================================================================
+   Status Bar - MS Word-style Status Bar
+   Height: ~24px, Fixed position at bottom of editor window
+   ============================================================================= */
+
+.status-bar {
+  height: 24px;
+  min-height: 24px;
+  background: linear-gradient(to bottom, #f5f5f5 0%, #e8e8e8 100%);
+  border-top: 1px solid #c8c8c8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  font-size: 12px;
+  color: #555;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* =============================================================================
+   Status Bar Sections
+   ============================================================================= */
+
+.status-bar-left {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.status-bar-center {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  justify-content: center;
+}
+
+.status-bar-right {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 4px;
+}
+
+/* =============================================================================
+   Status Items - Individual clickable/hoverable items
+   ============================================================================= */
+
+.status-item {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 10px;
+  border-right: 1px solid #d0d0d0;
+  cursor: default;
+  white-space: nowrap;
+  transition: background-color 0.1s;
+}
+
+.status-item:last-child {
+  border-right: none;
+}
+
+.status-item.clickable {
+  cursor: pointer;
+}
+
+.status-item.clickable:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.status-item.clickable:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Page Info */
+.status-item.page-info {
+  min-width: 90px;
+}
+
+/* Word Count */
+.status-item.word-count {
+  min-width: 70px;
+}
+
+/* Language Indicator */
+.status-item.language {
+  min-width: 60px;
+}
+
+/* Spell Check Status */
+.status-item.spell-check {
+  padding: 0 8px;
+  gap: 4px;
+}
+
+.spell-check-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+}
+
+.spell-check-icon.checking {
+  animation: pulse 1.5s infinite;
+}
+
+.spell-check-icon.has-errors {
+  color: #dc2626;
+}
+
+.spell-check-icon.no-errors {
+  color: #16a34a;
+}
+
+.spell-check-icon.disabled {
+  color: #999;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Text Direction Indicator */
+.status-item.status-direction {
+  font-weight: 500;
+  min-width: 36px;
+  justify-content: center;
+}
+
+/* =============================================================================
+   View Mode Toggle
+   ============================================================================= */
+
+.view-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 0 4px;
+  height: 100%;
+}
+
+.view-mode-button {
+  padding: 3px 5px;
+  border: none;
+  background: transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+
+.view-mode-button:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  color: #333;
+}
+
+.view-mode-button.active {
+  background-color: rgba(0, 102, 204, 0.15);
+  color: #0066cc;
+}
+
+.view-mode-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* =============================================================================
+   Zoom Controls in Status Bar
+   ============================================================================= */
+
+.status-bar .zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  padding: 0 4px;
+  border-left: 1px solid #d0d0d0;
+}
+
+.status-bar .zoom-buttons {
+  display: flex;
+  gap: 1px;
+}
+
+.status-bar .zoom-button {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+
+.status-bar .zoom-button:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.08);
+  color: #333;
+}
+
+.status-bar .zoom-button:active:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.status-bar .zoom-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Zoom Slider */
+.status-bar .zoom-slider {
+  width: 80px;
+  height: 3px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #ccc;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.status-bar .zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  background: #666;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.status-bar .zoom-slider::-webkit-slider-thumb:hover {
+  background: #0066cc;
+}
+
+.status-bar .zoom-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: #666;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+/* Zoom Dropdown */
+.status-bar .zoom-dropdown {
+  position: relative;
+}
+
+.status-bar .zoom-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  border: none;
+  background: transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #555;
+  min-width: 55px;
+  justify-content: center;
+  transition: background-color 0.1s;
+}
+
+.status-bar .zoom-dropdown-trigger:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.status-bar .zoom-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.status-bar .zoom-dropdown-arrow {
+  font-size: 7px;
+  color: #888;
+  margin-left: 2px;
+}
+
+.status-bar .zoom-dropdown-menu {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 4px;
+  background: white;
+  border: 1px solid #c8c8c8;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  min-width: 120px;
+  padding: 4px 0;
+  z-index: 100;
+}
+
+.status-bar .zoom-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-size: 12px;
+  color: #333;
+  transition: background-color 0.1s;
+}
+
+.status-bar .zoom-dropdown-item:hover {
+  background-color: #e8f0fe;
+}
+
+.status-bar .zoom-dropdown-item.active {
+  background-color: #0066cc;
+  color: white;
+}
+
+.status-bar .zoom-dropdown-divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 4px 0;
+}
+
+.status-bar .zoom-dropdown-custom {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+}
+
+.status-bar .zoom-custom-input {
+  width: 50px;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 11px;
+  outline: none;
+}
+
+.status-bar .zoom-custom-input:focus {
+  border-color: #0066cc;
+}
+
+/* =============================================================================
+   Responsive Design - Collapse items on narrow screens
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  .status-bar {
+    font-size: 11px;
+  }
+
+  .status-item {
+    padding: 0 6px;
+  }
+
+  .status-item.word-count .word-count-label {
+    display: none;
+  }
+
+  .status-item.language .language-full {
+    display: none;
+  }
+
+  .status-item.language .language-short {
+    display: inline;
+  }
+
+  .status-bar .zoom-slider {
+    width: 60px;
+  }
+}
+
+@media (max-width: 600px) {
+  .status-bar-center {
+    display: none;
+  }
+
+  .status-item.page-info {
+    min-width: 70px;
+  }
+
+  .status-item.language {
+    display: none;
+  }
+
+  .status-bar .zoom-slider {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-item.word-count {
+    display: none;
+  }
+
+  .status-item.spell-check {
+    display: none;
+  }
+
+  .view-mode-toggle {
+    display: none;
+  }
+}
+
+/* =============================================================================
+   Dark Mode Support
+   ============================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .status-bar {
+    background: linear-gradient(to bottom, #3a3a3a 0%, #2d2d2d 100%);
+    border-top-color: #444;
+    color: #ccc;
+  }
+
+  .status-item {
+    border-right-color: #444;
+  }
+
+  .status-item.clickable:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .status-item.clickable:active {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .view-mode-button {
+    color: #aaa;
+  }
+
+  .view-mode-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .view-mode-button.active {
+    background-color: rgba(88, 166, 255, 0.2);
+    color: #58a6ff;
+  }
+
+  .status-bar .zoom-controls {
+    border-left-color: #444;
+  }
+
+  .status-bar .zoom-button {
+    color: #aaa;
+  }
+
+  .status-bar .zoom-button:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .status-bar .zoom-slider {
+    background: #555;
+  }
+
+  .status-bar .zoom-slider::-webkit-slider-thumb {
+    background: #888;
+  }
+
+  .status-bar .zoom-slider::-webkit-slider-thumb:hover {
+    background: #58a6ff;
+  }
+
+  .status-bar .zoom-dropdown-trigger {
+    color: #ccc;
+  }
+
+  .status-bar .zoom-dropdown-trigger:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .status-bar .zoom-dropdown-menu {
+    background: #2d2d2d;
+    border-color: #444;
+  }
+
+  .status-bar .zoom-dropdown-item {
+    color: #ccc;
+  }
+
+  .status-bar .zoom-dropdown-item:hover {
+    background-color: #3a3a3a;
+  }
+
+  .status-bar .zoom-dropdown-item.active {
+    background-color: #0066cc;
+    color: white;
+  }
+
+  .status-bar .zoom-dropdown-divider {
+    background: #444;
+  }
+
+  .status-bar .zoom-custom-input {
+    background: #1a1a1a;
+    border-color: #555;
+    color: #fff;
+  }
+
+  .spell-check-icon.has-errors {
+    color: #f87171;
+  }
+
+  .spell-check-icon.no-errors {
+    color: #4ade80;
+  }
+
+  .spell-check-icon.disabled {
+    color: #666;
+  }
+}
+
+/* =============================================================================
+   High Contrast Mode Support
+   ============================================================================= */
+
+.theme-high-contrast .status-bar {
+  background: #000;
+  border-top: 2px solid #fff;
+  color: #fff;
+}
+
+.theme-high-contrast .status-item {
+  border-right-color: #fff;
+}
+
+.theme-high-contrast .status-item.clickable:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.theme-high-contrast .view-mode-button {
+  color: #fff;
+}
+
+.theme-high-contrast .view-mode-button:hover,
+.theme-high-contrast .view-mode-button.active {
+  background-color: #fff;
+  color: #000;
+}
+
+.theme-high-contrast .status-bar .zoom-button {
+  color: #fff;
+}
+
+.theme-high-contrast .status-bar .zoom-button:hover:not(:disabled) {
+  background-color: #fff;
+  color: #000;
+}
+
+.theme-high-contrast .status-bar .zoom-dropdown-trigger {
+  color: #fff;
+}
+
+.theme-high-contrast .status-bar .zoom-dropdown-trigger:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+/* =============================================================================
+   Focus States for Accessibility
+   ============================================================================= */
+
+.status-item.clickable:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: -2px;
+}
+
+.view-mode-button:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 1px;
+}
+
+.status-bar .zoom-button:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 1px;
+}
+
+.status-bar .zoom-slider:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.status-bar .zoom-dropdown-trigger:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 1px;
+}

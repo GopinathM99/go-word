@@ -1,0 +1,35 @@
+[package]
+name = "ms-word"
+version.workspace = true
+edition.workspace = true
+description = "Word processor desktop application"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-shell = "2"
+serde.workspace = true
+serde_json.workspace = true
+doc_model.workspace = true
+edit_engine.workspace = true
+layout_engine.workspace = true
+mail_merge.workspace = true
+perf.workspace = true
+render_model.workspace = true
+revisions.workspace = true
+text_engine.workspace = true
+store.workspace = true
+collab.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+base64 = "0.22"
+rand = "0.8"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

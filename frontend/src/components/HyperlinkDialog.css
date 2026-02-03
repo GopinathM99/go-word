@@ -1,0 +1,269 @@
+.hyperlink-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.hyperlink-dialog {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  width: 480px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.hyperlink-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.hyperlink-dialog-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.hyperlink-dialog form {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #999;
+}
+
+.error-message {
+  background-color: #fff5f5;
+  border: 1px solid #fc8181;
+  color: #c53030;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.preview-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+.preview-section label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.link-preview {
+  padding: 8px;
+  background-color: #ffffff;
+  border-radius: 4px;
+}
+
+.preview-link {
+  color: #0000ff;
+  text-decoration: underline;
+  cursor: pointer;
+  word-break: break-all;
+}
+
+.hyperlink-dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 8px;
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.cancel-button,
+.submit-button,
+.remove-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.cancel-button {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.submit-button {
+  background-color: #0066cc;
+  border: 1px solid #0066cc;
+  color: #ffffff;
+}
+
+.submit-button:hover {
+  background-color: #0052a3;
+  border-color: #0052a3;
+}
+
+.remove-button {
+  background-color: #ffffff;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+}
+
+.remove-button:hover {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .hyperlink-dialog {
+    background-color: #2d2d2d;
+  }
+
+  .hyperlink-dialog-header {
+    border-bottom-color: #444;
+  }
+
+  .hyperlink-dialog-header h2 {
+    color: #fff;
+  }
+
+  .close-button {
+    color: #aaa;
+  }
+
+  .close-button:hover {
+    background-color: #444;
+    color: #fff;
+  }
+
+  .form-group label {
+    color: #eee;
+  }
+
+  .form-group input,
+  .form-group select {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #fff;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: #4da6ff;
+    box-shadow: 0 0 0 3px rgba(77, 166, 255, 0.2);
+  }
+
+  .form-group input::placeholder {
+    color: #888;
+  }
+
+  .error-message {
+    background-color: #3d2828;
+    border-color: #a83232;
+    color: #ff8080;
+  }
+
+  .preview-section {
+    background-color: #363636;
+    border-color: #444;
+  }
+
+  .preview-section label {
+    color: #aaa;
+  }
+
+  .link-preview {
+    background-color: #2d2d2d;
+  }
+
+  .hyperlink-dialog-footer {
+    border-top-color: #444;
+  }
+
+  .cancel-button {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #fff;
+  }
+
+  .cancel-button:hover {
+    background-color: #4d4d4d;
+    border-color: #666;
+  }
+}

@@ -1,0 +1,352 @@
+/**
+ * ViewModeSelector Styles
+ *
+ * Styles for the view mode selector component with:
+ * - Dropdown variant
+ * - Tabs variant
+ * - Compact variant
+ * - Dark mode support
+ * - Accessibility focus states
+ */
+
+/* =============================================================================
+   Wrapper
+   ============================================================================= */
+
+.view-mode-selector-wrapper {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* =============================================================================
+   Dropdown Variant
+   ============================================================================= */
+
+.view-mode-selector.dropdown {
+  position: relative;
+}
+
+.view-mode-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-color, #d0d0d0);
+  border-radius: 4px;
+  background: var(--button-bg, #fff);
+  color: var(--text-primary, #333);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 140px;
+}
+
+.view-mode-button:hover:not(:disabled) {
+  background: var(--hover-bg, #f5f5f5);
+  border-color: var(--border-hover, #b0b0b0);
+}
+
+.view-mode-button:focus-visible {
+  outline: 2px solid var(--focus-ring, #0078d4);
+  outline-offset: 1px;
+}
+
+.view-mode-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.view-mode-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--icon-color, #666);
+}
+
+.view-mode-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.view-mode-label {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-arrow {
+  font-size: 8px;
+  color: var(--text-secondary, #666);
+  margin-left: 4px;
+}
+
+/* Dropdown Menu */
+.view-mode-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  padding: 4px 0;
+  list-style: none;
+  background: var(--menu-bg, #fff);
+  border: 1px solid var(--border-color, #d0d0d0);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 280px;
+}
+
+.view-mode-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.view-mode-option:hover,
+.view-mode-option.focused {
+  background: var(--item-hover-bg, #f5f5f5);
+}
+
+.view-mode-option.selected {
+  background: var(--selected-bg, #e8f4fd);
+}
+
+.view-mode-option.selected.focused {
+  background: var(--selected-hover-bg, #d4e8f8);
+}
+
+.option-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--icon-color, #666);
+  margin-top: 2px;
+}
+
+.option-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.option-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.option-name {
+  display: block;
+  font-weight: 500;
+  color: var(--text-primary, #333);
+  margin-bottom: 2px;
+}
+
+.option-description {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary, #666);
+  line-height: 1.3;
+}
+
+.option-shortcut {
+  font-size: 11px;
+  color: var(--text-tertiary, #888);
+  padding: 2px 6px;
+  background: var(--shortcut-bg, #f0f0f0);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.option-check {
+  color: var(--check-color, #0078d4);
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+/* =============================================================================
+   Tabs Variant
+   ============================================================================= */
+
+.view-mode-selector.tabs {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--tabs-bg, #f0f0f0);
+  border-radius: 6px;
+}
+
+.view-mode-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-mode-tab:hover:not(:disabled):not(.selected) {
+  background: var(--tab-hover-bg, #e0e0e0);
+  color: var(--text-primary, #333);
+}
+
+.view-mode-tab.selected {
+  background: var(--tab-selected-bg, #fff);
+  color: var(--text-primary, #333);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.view-mode-tab:focus-visible {
+  outline: 2px solid var(--focus-ring, #0078d4);
+  outline-offset: 1px;
+}
+
+.view-mode-tab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tab-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.tab-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.tab-label {
+  font-weight: 500;
+}
+
+/* =============================================================================
+   Compact Variant
+   ============================================================================= */
+
+.view-mode-selector.compact {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--compact-bg, #f5f5f5);
+  border-radius: 4px;
+}
+
+.view-mode-compact-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-mode-compact-btn:hover:not(:disabled):not(.selected) {
+  background: var(--compact-hover-bg, #e0e0e0);
+  color: var(--text-primary, #333);
+}
+
+.view-mode-compact-btn.selected {
+  background: var(--compact-selected-bg, #fff);
+  color: var(--primary-color, #0078d4);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.view-mode-compact-btn:focus-visible {
+  outline: 2px solid var(--focus-ring, #0078d4);
+  outline-offset: 1px;
+}
+
+.view-mode-compact-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.compact-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.compact-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* =============================================================================
+   Dark Mode Support
+   ============================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .view-mode-selector {
+    --button-bg: #2d2d2d;
+    --menu-bg: #2d2d2d;
+    --border-color: #3c3c3c;
+    --border-hover: #555;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --text-tertiary: #777;
+    --icon-color: #a0a0a0;
+    --hover-bg: #3a3a3a;
+    --item-hover-bg: #383838;
+    --selected-bg: #1a3352;
+    --selected-hover-bg: #1e4a70;
+    --shortcut-bg: #3a3a3a;
+    --check-color: #4da6ff;
+    --focus-ring: #4da6ff;
+    --tabs-bg: #252525;
+    --tab-hover-bg: #333;
+    --tab-selected-bg: #2d2d2d;
+    --compact-bg: #252525;
+    --compact-hover-bg: #333;
+    --compact-selected-bg: #2d2d2d;
+    --primary-color: #4da6ff;
+  }
+}
+
+/* =============================================================================
+   High Contrast Mode
+   ============================================================================= */
+
+@media (prefers-contrast: high) {
+  .view-mode-button,
+  .view-mode-tab,
+  .view-mode-compact-btn {
+    border-width: 2px;
+  }
+
+  .view-mode-option.focused,
+  .view-mode-tab:focus-visible,
+  .view-mode-compact-btn:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* =============================================================================
+   Reduced Motion
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .view-mode-button,
+  .view-mode-tab,
+  .view-mode-compact-btn,
+  .view-mode-option {
+    transition: none;
+  }
+}

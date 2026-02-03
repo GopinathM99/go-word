@@ -1,0 +1,14 @@
+[package]
+name = "charts"
+version.workspace = true
+edition.workspace = true
+description = "Chart support for MS Word clone - import, rendering, and export"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+quick-xml = "0.31"
+
+[dev-dependencies]
+proptest.workspace = true

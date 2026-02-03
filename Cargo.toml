@@ -1,0 +1,85 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/charts",
+    "crates/collab",
+    "crates/doc_model",
+    "crates/edit_engine",
+    "crates/layout_engine",
+    "crates/mail_merge",
+    "crates/math",
+    "crates/perf",
+    "crates/plugins",
+    "crates/render_model",
+    "crates/revisions",
+    "crates/telemetry",
+    "crates/text_engine",
+    "crates/store",
+    "src-tauri",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["MS Word Team"]
+license = "MIT"
+
+[workspace.dependencies]
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# UUID for node IDs
+uuid = { version = "1.0", features = ["v4", "serde"] }
+
+# Error handling
+thiserror = "2.0"
+anyhow = "1.0"
+
+# Text shaping and Unicode
+rustybuzz = "0.18"
+unicode-segmentation = "1.10"
+unicode-bidi = "0.3"
+unicode-linebreak = "0.1"
+
+# Font discovery
+font-kit = "0.14"
+
+# URL encoding for hyperlinks
+urlencoding = "2.1"
+
+# Date/time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Regex for validation (lightweight)
+regex-lite = "0.1"
+
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Testing
+proptest = "1.0"
+
+# Internal crates
+charts = { path = "crates/charts" }
+collab = { path = "crates/collab" }
+doc_model = { path = "crates/doc_model" }
+edit_engine = { path = "crates/edit_engine" }
+layout_engine = { path = "crates/layout_engine" }
+mail_merge = { path = "crates/mail_merge" }
+math = { path = "crates/math" }
+perf = { path = "crates/perf" }
+plugins = { path = "crates/plugins" }
+render_model = { path = "crates/render_model" }
+revisions = { path = "crates/revisions" }
+telemetry = { path = "crates/telemetry" }
+text_engine = { path = "crates/text_engine" }
+store = { path = "crates/store" }
+
+[profile.release]
+lto = true
+codegen-units = 1

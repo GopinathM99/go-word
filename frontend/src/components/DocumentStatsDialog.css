@@ -1,0 +1,317 @@
+/* =============================================================================
+   Document Statistics Dialog
+   ============================================================================= */
+
+.document-stats-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.document-stats-dialog {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 420px;
+  max-width: 90vw;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header */
+.document-stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+}
+
+.document-stats-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.document-stats-header .close-button {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: #666;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.document-stats-header .close-button:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+/* Content */
+.document-stats-content {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.stats-calculating {
+  text-align: center;
+  padding: 12px;
+  color: #666;
+  font-style: italic;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+/* Statistics Table */
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.stats-table th,
+.stats-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.stats-table th {
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #666;
+  background-color: #f9f9f9;
+}
+
+.stat-header-label {
+  width: 50%;
+}
+
+.stat-header-value {
+  width: 25%;
+  text-align: right !important;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #333;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 500;
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.document-value {
+  color: #333;
+}
+
+.selection-value {
+  color: #0066cc;
+}
+
+.stats-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.stats-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Reading Time Section */
+.reading-time-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background-color: #f0f7ff;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.reading-time-icon {
+  color: #0066cc;
+  display: flex;
+  align-items: center;
+}
+
+.reading-time-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0066cc;
+}
+
+/* Selection Note */
+.selection-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+.selection-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #999;
+}
+
+/* Footer */
+.document-stats-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 20px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+}
+
+.close-button-primary {
+  padding: 10px 24px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.close-button-primary:hover {
+  background-color: #0052a3;
+}
+
+.close-button-primary:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* =============================================================================
+   Dark Mode Support
+   ============================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .document-stats-dialog {
+    background-color: #2d2d2d;
+  }
+
+  .document-stats-header {
+    background-color: #252525;
+    border-bottom-color: #444;
+  }
+
+  .document-stats-header h2 {
+    color: #fff;
+  }
+
+  .document-stats-header .close-button {
+    color: #aaa;
+  }
+
+  .document-stats-header .close-button:hover {
+    background-color: #3d3d3d;
+    color: #fff;
+  }
+
+  .stats-calculating {
+    background-color: #333;
+    color: #aaa;
+  }
+
+  .stats-table th {
+    background-color: #252525;
+    color: #aaa;
+  }
+
+  .stats-table td {
+    border-bottom-color: #444;
+  }
+
+  .stat-label {
+    color: #e0e0e0;
+  }
+
+  .document-value {
+    color: #e0e0e0;
+  }
+
+  .selection-value {
+    color: #5c9eff;
+  }
+
+  .stats-table tbody tr:hover {
+    background-color: #333;
+  }
+
+  .reading-time-section {
+    background-color: #1a3a5c;
+  }
+
+  .reading-time-icon {
+    color: #5c9eff;
+  }
+
+  .reading-time-text {
+    color: #5c9eff;
+  }
+
+  .selection-note {
+    background-color: #333;
+    color: #aaa;
+  }
+
+  .selection-note svg {
+    color: #666;
+  }
+
+  .document-stats-footer {
+    background-color: #252525;
+    border-top-color: #444;
+  }
+}
+
+/* =============================================================================
+   Responsive Adjustments
+   ============================================================================= */
+
+@media (max-width: 480px) {
+  .document-stats-dialog {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+
+  .document-stats-content {
+    padding: 16px;
+  }
+
+  .stats-table th,
+  .stats-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,716 @@
+/**
+ * High Contrast Theme
+ *
+ * Provides high contrast colors for users with visual impairments.
+ * Follows WCAG 2.1 AAA contrast requirements.
+ * Activated via prefers-contrast media query or manual toggle.
+ */
+
+/* =============================================================================
+   High Contrast Color Variables
+   ============================================================================= */
+
+:root.theme-high-contrast,
+@media (prefers-contrast: more) {
+  :root {
+    /* Primary colors */
+    --hc-background: #000000;
+    --hc-foreground: #ffffff;
+    --hc-accent: #ffff00;
+    --hc-accent-secondary: #00ffff;
+    --hc-error: #ff6b6b;
+    --hc-success: #00ff00;
+    --hc-warning: #ffff00;
+
+    /* Border and focus */
+    --hc-border: #ffffff;
+    --hc-border-focus: #ffff00;
+    --hc-focus-ring: #ffff00;
+    --hc-focus-ring-width: 3px;
+
+    /* Link colors */
+    --hc-link: #00ffff;
+    --hc-link-visited: #ff00ff;
+    --hc-link-hover: #ffffff;
+
+    /* Button colors */
+    --hc-button-bg: #000000;
+    --hc-button-fg: #ffffff;
+    --hc-button-border: #ffffff;
+    --hc-button-hover-bg: #ffffff;
+    --hc-button-hover-fg: #000000;
+    --hc-button-active-bg: #ffff00;
+    --hc-button-active-fg: #000000;
+
+    /* Disabled state */
+    --hc-disabled-bg: #333333;
+    --hc-disabled-fg: #999999;
+    --hc-disabled-border: #666666;
+
+    /* Selection */
+    --hc-selection-bg: #ffff00;
+    --hc-selection-fg: #000000;
+
+    /* Page/Canvas */
+    --hc-canvas-bg: #ffffff;
+    --hc-canvas-fg: #000000;
+  }
+}
+
+/* =============================================================================
+   Global High Contrast Styles
+   ============================================================================= */
+
+:root.theme-high-contrast,
+@media (prefers-contrast: more) {
+  body {
+    background-color: var(--hc-background);
+    color: var(--hc-foreground);
+  }
+
+  /* Ensure all text meets contrast requirements */
+  * {
+    forced-color-adjust: auto;
+  }
+}
+
+/* =============================================================================
+   Focus Indicators - Enhanced for Visibility
+   ============================================================================= */
+
+:root.theme-high-contrast,
+@media (prefers-contrast: more) {
+  /* Universal focus style */
+  :focus {
+    outline: var(--hc-focus-ring-width) solid var(--hc-focus-ring);
+    outline-offset: 2px;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: var(--hc-focus-ring-width) solid var(--hc-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Button focus */
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    outline: var(--hc-focus-ring-width) solid var(--hc-focus-ring);
+    outline-offset: 2px;
+    box-shadow: inset 0 0 0 2px var(--hc-focus-ring);
+  }
+
+  /* Input focus */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: var(--hc-focus-ring-width) solid var(--hc-focus-ring);
+    outline-offset: 2px;
+    border-color: var(--hc-focus-ring);
+  }
+
+  /* Link focus */
+  a:focus-visible {
+    outline: var(--hc-focus-ring-width) solid var(--hc-focus-ring);
+    outline-offset: 2px;
+    background-color: var(--hc-focus-ring);
+    color: var(--hc-background);
+  }
+}
+
+/* =============================================================================
+   Toolbar High Contrast
+   ============================================================================= */
+
+:root.theme-high-contrast .toolbar,
+@media (prefers-contrast: more) {
+  .toolbar {
+    background: var(--hc-background);
+    border-bottom: 2px solid var(--hc-border);
+  }
+
+  .toolbar-group {
+    border-right: 2px solid var(--hc-border);
+  }
+
+  .toolbar button {
+    background: var(--hc-button-bg);
+    color: var(--hc-button-fg);
+    border: 2px solid var(--hc-button-border);
+    font-weight: bold;
+  }
+
+  .toolbar button:hover {
+    background: var(--hc-button-hover-bg);
+    color: var(--hc-button-hover-fg);
+  }
+
+  .toolbar button:active {
+    background: var(--hc-button-active-bg);
+    color: var(--hc-button-active-fg);
+  }
+
+  .toolbar button:disabled {
+    background: var(--hc-disabled-bg);
+    color: var(--hc-disabled-fg);
+    border-color: var(--hc-disabled-border);
+  }
+
+  /* Toggle buttons - pressed state */
+  .toolbar button[aria-pressed="true"] {
+    background: var(--hc-accent);
+    color: var(--hc-background);
+    border-color: var(--hc-accent);
+  }
+
+  /* Dropdown menus */
+  .toolbar-dropdown-menu {
+    background: var(--hc-background);
+    border: 2px solid var(--hc-border);
+    box-shadow: none;
+  }
+
+  .toolbar-dropdown-menu button {
+    border: none;
+    border-bottom: 1px solid var(--hc-border);
+  }
+
+  .toolbar-dropdown-menu button:last-child {
+    border-bottom: none;
+  }
+
+  .toolbar-dropdown-menu button:hover,
+  .toolbar-dropdown-menu button:focus {
+    background: var(--hc-button-hover-bg);
+    color: var(--hc-button-hover-fg);
+  }
+}
+
+/* =============================================================================
+   Editor Canvas High Contrast
+   ============================================================================= */
+
+:root.theme-high-contrast .editor-canvas,
+@media (prefers-contrast: more) {
+  .editor-wrapper {
+    background: var(--hc-background);
+  }
+
+  .editor-canvas {
+    /* Canvas content is rendered programmatically,
+       but we can style the wrapper */
+    box-shadow: none;
+    border: 2px solid var(--hc-border);
+  }
+
+  .editor-canvas:focus {
+    border-color: var(--hc-focus-ring);
+    box-shadow: 0 0 0 var(--hc-focus-ring-width) var(--hc-focus-ring);
+  }
+}
+
+/* =============================================================================
+   Status Bar High Contrast
+   ============================================================================= */
+
+:root.theme-high-contrast .status-bar,
+@media (prefers-contrast: more) {
+  .status-bar {
+    background: var(--hc-background);
+    border-top: 2px solid var(--hc-border);
+    color: var(--hc-foreground);
+  }
+
+  .status-item {
+    border-right: 2px solid var(--hc-border);
+  }
+
+  .status-item.zoom {
+    border-left: 2px solid var(--hc-border);
+  }
+
+  /* Zoom controls */
+  .zoom-button {
+    background: var(--hc-button-bg);
+    color: var(--hc-button-fg);
+    border: 2px solid var(--hc-button-border);
+  }
+
+  .zoom-button:hover:not(:disabled) {
+    background: var(--hc-button-hover-bg);
+    color: var(--hc-button-hover-fg);
+  }
+
+  .zoom-button:disabled {
+    background: var(--hc-disabled-bg);
+    color: var(--hc-disabled-fg);
+    border-color: var(--hc-disabled-border);
+  }
+
+  .zoom-slider {
+    background: var(--hc-border);
+  }
+
+  .zoom-slider::-webkit-slider-thumb {
+    background: var(--hc-accent);
+    border: 2px solid var(--hc-foreground);
+  }
+
+  .zoom-slider::-moz-range-thumb {
+    background: var(--hc-accent);
+    border: 2px solid var(--hc-foreground);
+  }
+}
+
+/* =============================================================================
+   Dialogs High Contrast
+   ============================================================================= */
+
+:root.theme-high-contrast,
+@media (prefers-contrast: more) {
+  /* Dialog backdrop */
+  .dialog-overlay {
+    background: rgba(0, 0, 0, 0.9);
+  }
+
+  /* Dialog container */
+  .dialog,
+  [role="dialog"],
+  [role="alertdialog"] {
+    background: var(--hc-background);
+    border: 3px solid var(--hc-border);
+    box-shadow: none;
+    color: var(--hc-foreground);
+  }
+
+  /* Dialog header */
+  .dialog-header {
+    border-bottom: 2px solid var(--hc-border);
+  }
+
+  /* Dialog title */
+  .dialog-title {
+    color: var(--hc-foreground);
+    font-weight: bold;
+  }
+
+  /* Dialog close button */
+  .dialog-close-button {
+    background: var(--hc-button-bg);
+    color: var(--hc-button-fg);
+    border: 2px solid var(--hc-button-border);
+  }
+
+  .dialog-close-button:hover {
+    background: var(--hc-button-hover-bg);
+    color: var(--hc-button-hover-fg);
+  }
+
+  /* Dialog footer */
+  .dialog-footer {
+    border-top: 2px solid var(--hc-border);
+  }
+
+  /* Form inputs in dialogs */
+  .dialog input,
+  .dialog textarea,
+  .dialog select {
+    background: var(--hc-background);
+    color: var(--hc-foreground);
+    border: 2px solid var(--hc-border);
+  }
+
+  .dialog input:focus,
+  .dialog textarea:focus,
+  .dialog select:focus {
+    border-color: var(--hc-focus-ring);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hc-focus-ring);
+  }
+
+  /* Labels */
+  .dialog label {
+    color: var(--hc-foreground);
+    font-weight: bold;
+  }
+}
+
+/* =============================================================================
+   Form Elements High Contrast
+   ============================================================================= */
+
+:root.theme-high-contrast,
+@media (prefers-contrast: more) {
+  /* Text inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="url"],
+  input[type="number"],
+  input[type="search"],
+  textarea {
+    background: var(--hc-background);
+    color: var(--hc-foreground);
+    border: 2px solid var(--hc-border);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--hc-disabled-fg);
+    opacity: 1;
+  }
+
+  /* Checkboxes and radios */
+  input[type="checkbox"],
+  input[type="radio"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--hc-border);
+    background: var(--hc-background);
+    cursor: pointer;
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked {
+    background: var(--hc-accent);
+    border-color: var(--hc-accent);
+  }
+
+  input[type="checkbox"]:checked::after {
+    content: '\2713';
+    display: block;
+    color: var(--hc-background);
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 16px;
+  }
+
+  input[type="radio"] {
+    border-radius: 50%;
+  }
+
+  input[type="radio"]:checked::after {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    background: var(--hc-background);
+    border-radius: 50%;
+    margin: 3px;
+  }
+
+  /* Select dropdowns */
+  select {
+    background: var(--hc-background);
+    color: var(--hc-foreground);
+    border: 2px solid var(--hc-border);
+  }
+
+  select option {
+    background: var(--hc-background);
+    color: var(--hc-foreground);
+  }
+
+  select option:checked,
+  select option:hover {
+    background: var(--hc-accent);
+    color: var(--hc-background);
+  }
+}
+
+/* =============================================================================
+   Links High Contrast
+   ============================================================================= */
+
+:root.theme-high-contrast,
+@media (prefers-contrast: more) {
+  a {
+    color: var(--hc-link);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+
+  a:visited {
+    color: var(--hc-link-visited);
+  }
+
+  a:hover {
+    color: var(--hc-link-hover);
+    background: var(--hc-link);
+  }
+
+  a:active {
+    background: var(--hc-accent);
+    color: var(--hc-background);
+  }
+}
+
+/* =============================================================================
+   Tables High Contrast
+   ============================================================================= */
+
+:root.theme-high-contrast,
+@media (prefers-contrast: more) {
+  table {
+    border-collapse: collapse;
+    border: 2px solid var(--hc-border);
+  }
+
+  th,
+  td {
+    border: 2px solid var(--hc-border);
+    padding: 8px;
+  }
+
+  th {
+    background: var(--hc-foreground);
+    color: var(--hc-background);
+    font-weight: bold;
+  }
+
+  tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  tr:hover {
+    background: var(--hc-accent);
+    color: var(--hc-background);
+  }
+}
+
+/* =============================================================================
+   Rulers High Contrast
+   ============================================================================= */
+
+:root.theme-high-contrast .ruler,
+@media (prefers-contrast: more) {
+  .ruler {
+    background: var(--hc-background);
+    border-color: var(--hc-border);
+  }
+
+  .ruler-corner {
+    background: var(--hc-background);
+    border-color: var(--hc-border);
+  }
+
+  .ruler-tick {
+    stroke: var(--hc-foreground);
+    stroke-width: 2;
+  }
+
+  .ruler-label {
+    fill: var(--hc-foreground);
+  }
+
+  .ruler-margin {
+    fill: var(--hc-disabled-bg);
+  }
+
+  .ruler-margin-handle {
+    stroke: var(--hc-accent);
+    stroke-width: 2;
+  }
+}
+
+/* =============================================================================
+   Scrollbars High Contrast
+   ============================================================================= */
+
+:root.theme-high-contrast,
+@media (prefers-contrast: more) {
+  ::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--hc-background);
+    border: 2px solid var(--hc-border);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--hc-foreground);
+    border: 2px solid var(--hc-background);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--hc-accent);
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: var(--hc-background);
+    border: 2px solid var(--hc-border);
+  }
+}
+
+/* =============================================================================
+   Skip Links - Always Visible on Focus
+   ============================================================================= */
+
+.skip-links {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+}
+
+.skip-link {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  padding: 12px 24px;
+  background: var(--hc-background, #000);
+  color: var(--hc-foreground, #fff);
+  border: 3px solid var(--hc-accent, #ff0);
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  width: auto;
+  height: auto;
+  z-index: 10001;
+}
+
+:root.theme-high-contrast .skip-link,
+@media (prefers-contrast: more) {
+  .skip-link {
+    background: var(--hc-background);
+    color: var(--hc-foreground);
+    border: 3px solid var(--hc-accent);
+  }
+
+  .skip-link:focus {
+    background: var(--hc-accent);
+    color: var(--hc-background);
+  }
+}
+
+/* =============================================================================
+   Icons and SVGs - Ensure Visibility
+   ============================================================================= */
+
+:root.theme-high-contrast,
+@media (prefers-contrast: more) {
+  svg {
+    fill: currentColor;
+  }
+
+  .toolbar-icon-button svg {
+    color: var(--hc-foreground);
+  }
+
+  .toolbar-icon-button:hover svg {
+    color: var(--hc-button-hover-fg);
+  }
+
+  button[aria-pressed="true"] .toolbar-icon-button svg {
+    color: var(--hc-background);
+  }
+}
+
+/* =============================================================================
+   Notifications and Alerts
+   ============================================================================= */
+
+:root.theme-high-contrast,
+@media (prefers-contrast: more) {
+  /* Font substitution notice */
+  .font-substitution-notice {
+    background: var(--hc-background);
+    border: 3px solid var(--hc-warning);
+    color: var(--hc-foreground);
+  }
+
+  .font-substitution-notice-icon {
+    color: var(--hc-warning);
+  }
+
+  .font-substitution-notice-title {
+    color: var(--hc-warning);
+    font-weight: bold;
+  }
+
+  /* Error states */
+  .error,
+  [aria-invalid="true"] {
+    border-color: var(--hc-error);
+    background-color: rgba(255, 107, 107, 0.1);
+  }
+
+  .error-message {
+    color: var(--hc-error);
+    font-weight: bold;
+  }
+
+  /* Success states */
+  .success {
+    border-color: var(--hc-success);
+  }
+
+  .success-message {
+    color: var(--hc-success);
+    font-weight: bold;
+  }
+}
+
+/* =============================================================================
+   No Reliance on Color Alone
+   ============================================================================= */
+
+:root.theme-high-contrast,
+@media (prefers-contrast: more) {
+  /* Required fields - add asterisk */
+  label.required::after,
+  .required-indicator::after {
+    content: ' *';
+    color: var(--hc-error);
+    font-weight: bold;
+  }
+
+  /* Error fields - add icon pattern */
+  input[aria-invalid="true"],
+  textarea[aria-invalid="true"],
+  select[aria-invalid="true"] {
+    border-color: var(--hc-error);
+    border-style: dashed;
+    border-width: 3px;
+  }
+
+  /* Disabled - add strikethrough pattern */
+  button:disabled,
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  /* Selected items - add border and background */
+  [aria-selected="true"],
+  .selected {
+    background: var(--hc-selection-bg);
+    color: var(--hc-selection-fg);
+    border: 3px solid var(--hc-foreground);
+  }
+
+  /* Current/active items */
+  [aria-current="true"],
+  [aria-current="page"],
+  [aria-current="step"] {
+    border: 3px solid var(--hc-accent);
+    font-weight: bold;
+  }
+}

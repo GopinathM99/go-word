@@ -1,0 +1,612 @@
+/**
+ * OutlineView Styles
+ *
+ * Styles for the full-screen outline view with:
+ * - Hierarchical tree layout
+ * - Level filter controls
+ * - Promote/demote buttons
+ * - Drag and drop indicators
+ * - Keyboard navigation
+ * - Dark mode support
+ */
+
+/* =============================================================================
+   Container
+   ============================================================================= */
+
+.outline-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--outline-bg, #ffffff);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: var(--text-primary, #333);
+}
+
+/* =============================================================================
+   Toolbar
+   ============================================================================= */
+
+.outline-view-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  background: var(--toolbar-bg, #f8f8f8);
+  flex-shrink: 0;
+}
+
+.outline-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.outline-view-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+}
+
+.heading-count {
+  font-size: 12px;
+  color: var(--text-secondary, #666);
+}
+
+/* Level Filter */
+.outline-level-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 12px;
+  color: var(--text-secondary, #666);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.filter-button {
+  padding: 4px 8px;
+  border: 1px solid var(--border-color, #d0d0d0);
+  border-radius: 4px;
+  background: var(--button-bg, #fff);
+  color: var(--text-secondary, #666);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-button:hover {
+  background: var(--hover-bg, #f0f0f0);
+  border-color: var(--border-hover, #b0b0b0);
+}
+
+.filter-button.active {
+  background: var(--active-bg, #0078d4);
+  border-color: var(--active-border, #0078d4);
+  color: #fff;
+}
+
+.filter-button.show-all {
+  margin-left: 8px;
+}
+
+/* Actions */
+.outline-view-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.outline-toolbar-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--border-color, #d0d0d0);
+  background: var(--button-bg, #fff);
+  color: var(--text-secondary, #666);
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.outline-toolbar-btn:hover:not(:disabled) {
+  background: var(--hover-bg, #f0f0f0);
+  border-color: var(--border-hover, #b0b0b0);
+  color: var(--text-primary, #333);
+}
+
+.outline-toolbar-btn:focus-visible {
+  outline: 2px solid var(--focus-ring, #0078d4);
+  outline-offset: 1px;
+}
+
+.outline-toolbar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.outline-toolbar-btn.exit {
+  margin-left: auto;
+}
+
+/* =============================================================================
+   Content Area
+   ============================================================================= */
+
+.outline-view-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 0;
+}
+
+/* Scrollbar */
+.outline-view-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.outline-view-content::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, #f0f0f0);
+}
+
+.outline-view-content::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #c0c0c0);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.outline-view-content::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, #a0a0a0);
+  background-clip: content-box;
+}
+
+/* =============================================================================
+   Tree Structure
+   ============================================================================= */
+
+.outline-view-tree {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.outline-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* =============================================================================
+   Outline Item
+   ============================================================================= */
+
+.outline-view-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  padding-left: calc(16px + var(--depth, 0) * var(--indent, 20px));
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 0;
+  transition: background 0.1s ease, border-color 0.1s ease;
+  user-select: none;
+}
+
+.outline-view-item:hover {
+  background: var(--item-hover-bg, #f5f5f5);
+}
+
+.outline-view-item.focused {
+  border-color: var(--focus-ring, #0078d4);
+  background: var(--focus-bg, #e8f4fd);
+}
+
+.outline-view-item.current {
+  background: var(--current-bg, #e6f0ff);
+  border-left: 4px solid var(--current-border, #0078d4);
+  padding-left: calc(12px + var(--depth, 0) * var(--indent, 20px));
+}
+
+.outline-view-item.current.focused {
+  background: var(--current-focus-bg, #d0e4ff);
+}
+
+.outline-view-item.dragging {
+  opacity: 0.5;
+  background: var(--dragging-bg, #e0e0e0);
+}
+
+.outline-view-item.drag-target {
+  border-top: 2px solid var(--drag-target-border, #0078d4);
+  margin-top: -2px;
+}
+
+/* =============================================================================
+   Expand/Collapse Toggle
+   ============================================================================= */
+
+.outline-expand-toggle {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #888);
+  font-size: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.outline-expand-toggle:hover {
+  background: var(--toggle-hover-bg, #e0e0e0);
+  color: var(--text-primary, #333);
+}
+
+.outline-expand-toggle:focus-visible {
+  outline: 2px solid var(--focus-ring, #0078d4);
+  outline-offset: 0;
+}
+
+.outline-expand-toggle .expand-icon {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.outline-expand-placeholder {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* =============================================================================
+   Level Badge
+   ============================================================================= */
+
+.outline-level-badge {
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 4px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.outline-level-badge.level-1 {
+  background: var(--level-1-bg, #0078d4);
+  color: var(--level-1-text, #fff);
+}
+
+.outline-level-badge.level-2 {
+  background: var(--level-2-bg, #107c10);
+  color: var(--level-2-text, #fff);
+}
+
+.outline-level-badge.level-3 {
+  background: var(--level-3-bg, #5c2d91);
+  color: var(--level-3-text, #fff);
+}
+
+.outline-level-badge.level-4 {
+  background: var(--level-4-bg, #ca5010);
+  color: var(--level-4-text, #fff);
+}
+
+.outline-level-badge.level-5 {
+  background: var(--level-5-bg, #8e562e);
+  color: var(--level-5-text, #fff);
+}
+
+.outline-level-badge.level-6 {
+  background: var(--level-6-bg, #666);
+  color: var(--level-6-text, #fff);
+}
+
+/* =============================================================================
+   Heading Text
+   ============================================================================= */
+
+.outline-heading-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary, #333);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.outline-view-item.current .outline-heading-text {
+  font-weight: 500;
+  color: var(--current-text, #0056a3);
+}
+
+/* =============================================================================
+   Actions
+   ============================================================================= */
+
+.outline-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.outline-view-item:hover .outline-actions,
+.outline-view-item:focus-within .outline-actions {
+  opacity: 1;
+}
+
+.outline-action-btn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.outline-action-btn:hover:not(:disabled) {
+  background: var(--action-hover-bg, #e0e0e0);
+  border-color: var(--border-color, #d0d0d0);
+  color: var(--text-primary, #333);
+}
+
+.outline-action-btn:focus-visible {
+  outline: 2px solid var(--focus-ring, #0078d4);
+  outline-offset: 0;
+}
+
+.outline-action-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* =============================================================================
+   Loading/Error/Empty States
+   ============================================================================= */
+
+.outline-loading,
+.outline-error,
+.outline-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.outline-loading {
+  color: var(--text-secondary, #666);
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-color, #e0e0e0);
+  border-top-color: var(--primary-color, #0078d4);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.outline-error {
+  color: var(--error-text, #d13438);
+}
+
+.error-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--error-bg, #fde7e9);
+  color: var(--error-text, #d13438);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.retry-button {
+  margin-top: 16px;
+  padding: 8px 20px;
+  border: 1px solid var(--border-color, #d0d0d0);
+  background: var(--button-bg, #fff);
+  color: var(--text-primary, #333);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s ease;
+}
+
+.retry-button:hover {
+  background: var(--hover-bg, #f0f0f0);
+}
+
+.outline-empty {
+  color: var(--text-secondary, #666);
+}
+
+.empty-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--empty-icon-bg, #f0f0f0);
+  color: var(--text-tertiary, #999);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.empty-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-tertiary, #888);
+  max-width: 280px;
+  line-height: 1.4;
+}
+
+/* =============================================================================
+   Footer
+   ============================================================================= */
+
+.outline-view-footer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border-light, #f0f0f0);
+  background: var(--footer-bg, #fafafa);
+  flex-shrink: 0;
+}
+
+.keyboard-hint {
+  font-size: 11px;
+  color: var(--text-tertiary, #888);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.keyboard-hint kbd {
+  padding: 3px 6px;
+  font-size: 10px;
+  font-family: inherit;
+  background: var(--kbd-bg, #e8e8e8);
+  border: 1px solid var(--border-color, #d0d0d0);
+  border-radius: 3px;
+  box-shadow: 0 1px 0 var(--border-color, #d0d0d0);
+}
+
+/* =============================================================================
+   Dark Mode Support
+   ============================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .outline-view {
+    --outline-bg: #1e1e1e;
+    --toolbar-bg: #252525;
+    --footer-bg: #252525;
+    --border-color: #3c3c3c;
+    --border-light: #333;
+    --border-hover: #555;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --text-tertiary: #777;
+    --button-bg: #2d2d2d;
+    --hover-bg: #333;
+    --active-bg: #0063b1;
+    --active-border: #0063b1;
+    --focus-ring: #4da6ff;
+    --focus-bg: #1a3a5c;
+    --item-hover-bg: #2a2a2a;
+    --current-bg: #1a3352;
+    --current-border: #4da6ff;
+    --current-focus-bg: #1e4a70;
+    --current-text: #6bb5ff;
+    --toggle-hover-bg: #404040;
+    --action-hover-bg: #3a3a3a;
+    --dragging-bg: #333;
+    --drag-target-border: #4da6ff;
+    --scrollbar-track: #252525;
+    --scrollbar-thumb: #444;
+    --scrollbar-thumb-hover: #555;
+    --error-bg: #3d1f1f;
+    --error-text: #ff6b6b;
+    --empty-icon-bg: #333;
+    --kbd-bg: #333;
+    --primary-color: #4da6ff;
+
+    /* Level badge colors for dark mode */
+    --level-1-bg: #0063b1;
+    --level-2-bg: #0b6a0b;
+    --level-3-bg: #4b237a;
+    --level-4-bg: #a8420d;
+    --level-5-bg: #744a27;
+    --level-6-bg: #555;
+  }
+}
+
+/* =============================================================================
+   High Contrast Mode
+   ============================================================================= */
+
+@media (prefers-contrast: high) {
+  .outline-view {
+    --border-color: #000;
+    --focus-ring: #000;
+  }
+
+  .outline-view-item.focused {
+    border-width: 3px;
+  }
+
+  .outline-view-item.current {
+    border-left-width: 5px;
+  }
+
+  .filter-button.active {
+    border-width: 2px;
+  }
+}
+
+/* =============================================================================
+   Reduced Motion
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .outline-view,
+  .outline-view * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================================================
+   Print Styles
+   ============================================================================= */
+
+@media print {
+  .outline-view {
+    display: none;
+  }
+}

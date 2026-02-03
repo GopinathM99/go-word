@@ -1,0 +1,18 @@
+[package]
+name = "doc_model"
+version.workspace = true
+edition.workspace = true
+description = "Document model with persistent tree structure and node types"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+thiserror.workspace = true
+unicode-segmentation.workspace = true
+urlencoding.workspace = true
+chrono.workspace = true
+regex-lite.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true

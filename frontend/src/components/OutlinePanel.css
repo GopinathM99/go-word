@@ -1,0 +1,589 @@
+/**
+ * OutlinePanel Styles
+ *
+ * Styles for the document outline panel with:
+ * - Tree indentation for hierarchy
+ * - Expand/collapse icons
+ * - Hover and selected states
+ * - Current position highlight
+ * - Scrollable container
+ * - Dark mode support
+ */
+
+/* =============================================================================
+   Panel Container
+   ============================================================================= */
+
+.outline-panel {
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  min-width: 220px;
+  max-width: 400px;
+  height: 100%;
+  background: var(--panel-bg, #ffffff);
+  border-right: 1px solid var(--border-color, #e0e0e0);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  color: var(--text-primary, #333);
+  overflow: hidden;
+}
+
+.outline-panel.compact {
+  width: 240px;
+  min-width: 180px;
+  font-size: 12px;
+}
+
+/* =============================================================================
+   Header
+   ============================================================================= */
+
+.outline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  background: var(--header-bg, #f8f8f8);
+  flex-shrink: 0;
+}
+
+.outline-header h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+}
+
+.outline-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heading-count {
+  font-size: 11px;
+  color: var(--text-secondary, #666);
+}
+
+.outline-panel .close-button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.outline-panel .close-button:hover {
+  background: var(--hover-bg, #e0e0e0);
+  color: var(--text-primary, #333);
+}
+
+.outline-panel .close-button:focus-visible {
+  outline: 2px solid var(--focus-ring, #0078d4);
+  outline-offset: 1px;
+}
+
+/* =============================================================================
+   Toolbar
+   ============================================================================= */
+
+.outline-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-light, #f0f0f0);
+  background: var(--toolbar-bg, #fafafa);
+  flex-shrink: 0;
+}
+
+.toolbar-button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--border-color, #d0d0d0);
+  background: var(--button-bg, #fff);
+  color: var(--text-secondary, #666);
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.toolbar-button:hover:not(:disabled) {
+  background: var(--hover-bg, #f0f0f0);
+  border-color: var(--border-hover, #b0b0b0);
+  color: var(--text-primary, #333);
+}
+
+.toolbar-button:focus-visible {
+  outline: 2px solid var(--focus-ring, #0078d4);
+  outline-offset: 1px;
+}
+
+.toolbar-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =============================================================================
+   Content Area
+   ============================================================================= */
+
+.outline-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 0;
+}
+
+/* Scrollbar styling */
+.outline-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.outline-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.outline-content::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #c0c0c0);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.outline-content::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, #a0a0a0);
+  background-clip: content-box;
+}
+
+/* =============================================================================
+   Tree Structure
+   ============================================================================= */
+
+.outline-tree {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.outline-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* =============================================================================
+   Outline Item
+   ============================================================================= */
+
+.outline-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  padding-left: calc(12px + var(--depth, 0) * 16px);
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 0;
+  transition: background 0.1s ease, border-color 0.1s ease;
+  user-select: none;
+}
+
+.outline-panel.compact .outline-item {
+  padding: 4px 10px;
+  padding-left: calc(10px + var(--depth, 0) * 14px);
+}
+
+.outline-item:hover {
+  background: var(--item-hover-bg, #f5f5f5);
+}
+
+.outline-item.focused {
+  border-color: var(--focus-ring, #0078d4);
+  background: var(--focus-bg, #e8f4fd);
+}
+
+.outline-item.current {
+  background: var(--current-bg, #e6f0ff);
+  border-left: 3px solid var(--current-border, #0078d4);
+  padding-left: calc(9px + var(--depth, 0) * 16px);
+}
+
+.outline-panel.compact .outline-item.current {
+  padding-left: calc(7px + var(--depth, 0) * 14px);
+}
+
+.outline-item.current.focused {
+  background: var(--current-focus-bg, #d0e4ff);
+}
+
+/* =============================================================================
+   Expand/Collapse Toggle
+   ============================================================================= */
+
+.expand-toggle {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #888);
+  font-size: 8px;
+  cursor: pointer;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.expand-toggle:hover {
+  background: var(--toggle-hover-bg, #e0e0e0);
+  color: var(--text-primary, #333);
+}
+
+.expand-toggle:focus-visible {
+  outline: 2px solid var(--focus-ring, #0078d4);
+  outline-offset: 0;
+}
+
+.expand-icon {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.expand-icon.expanded {
+  transform: rotate(0deg);
+}
+
+.expand-placeholder {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* =============================================================================
+   Level Badge
+   ============================================================================= */
+
+.level-badge {
+  padding: 1px 4px;
+  font-size: 9px;
+  font-weight: 600;
+  border-radius: 3px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.level-badge.level-1 {
+  background: var(--level-1-bg, #0078d4);
+  color: var(--level-1-text, #fff);
+}
+
+.level-badge.level-2 {
+  background: var(--level-2-bg, #107c10);
+  color: var(--level-2-text, #fff);
+}
+
+.level-badge.level-3 {
+  background: var(--level-3-bg, #5c2d91);
+  color: var(--level-3-text, #fff);
+}
+
+.level-badge.level-4 {
+  background: var(--level-4-bg, #ca5010);
+  color: var(--level-4-text, #fff);
+}
+
+.level-badge.level-5 {
+  background: var(--level-5-bg, #8e562e);
+  color: var(--level-5-text, #fff);
+}
+
+.level-badge.level-6 {
+  background: var(--level-6-bg, #666);
+  color: var(--level-6-text, #fff);
+}
+
+/* =============================================================================
+   Heading Text
+   ============================================================================= */
+
+.heading-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary, #333);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.outline-item.current .heading-text {
+  font-weight: 500;
+  color: var(--current-text, #0056a3);
+}
+
+/* =============================================================================
+   Page Number
+   ============================================================================= */
+
+.page-number {
+  padding: 2px 6px;
+  font-size: 10px;
+  color: var(--text-tertiary, #888);
+  background: var(--page-number-bg, #f0f0f0);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.outline-item.current .page-number {
+  background: var(--current-page-bg, #cde4f7);
+  color: var(--current-page-text, #0056a3);
+}
+
+/* =============================================================================
+   Loading State
+   ============================================================================= */
+
+.outline-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary, #666);
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-color, #e0e0e0);
+  border-top-color: var(--primary-color, #0078d4);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =============================================================================
+   Error State
+   ============================================================================= */
+
+.outline-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--error-text, #d13438);
+}
+
+.error-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--error-bg, #fde7e9);
+  color: var(--error-text, #d13438);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.retry-button {
+  margin-top: 12px;
+  padding: 6px 16px;
+  border: 1px solid var(--border-color, #d0d0d0);
+  background: var(--button-bg, #fff);
+  color: var(--text-primary, #333);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s ease;
+}
+
+.retry-button:hover {
+  background: var(--hover-bg, #f0f0f0);
+}
+
+/* =============================================================================
+   Empty State
+   ============================================================================= */
+
+.outline-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary, #666);
+}
+
+.empty-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--empty-icon-bg, #f0f0f0);
+  color: var(--text-tertiary, #999);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.empty-hint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-tertiary, #888);
+  max-width: 200px;
+  line-height: 1.4;
+}
+
+/* =============================================================================
+   Footer
+   ============================================================================= */
+
+.outline-footer {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border-light, #f0f0f0);
+  background: var(--footer-bg, #fafafa);
+  flex-shrink: 0;
+}
+
+.keyboard-hint {
+  font-size: 10px;
+  color: var(--text-tertiary, #888);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.keyboard-hint kbd {
+  padding: 2px 5px;
+  font-size: 9px;
+  font-family: inherit;
+  background: var(--kbd-bg, #e8e8e8);
+  border: 1px solid var(--border-color, #d0d0d0);
+  border-radius: 3px;
+  box-shadow: 0 1px 0 var(--border-color, #d0d0d0);
+}
+
+/* =============================================================================
+   Dark Mode Support
+   ============================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .outline-panel {
+    --panel-bg: #1e1e1e;
+    --header-bg: #252525;
+    --toolbar-bg: #2a2a2a;
+    --footer-bg: #252525;
+    --border-color: #3c3c3c;
+    --border-light: #333;
+    --border-hover: #555;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --text-tertiary: #777;
+    --hover-bg: #333;
+    --button-bg: #2d2d2d;
+    --focus-ring: #4da6ff;
+    --focus-bg: #1a3a5c;
+    --item-hover-bg: #2a2a2a;
+    --current-bg: #1a3352;
+    --current-border: #4da6ff;
+    --current-focus-bg: #1e4a70;
+    --current-text: #6bb5ff;
+    --current-page-bg: #1a3352;
+    --current-page-text: #6bb5ff;
+    --toggle-hover-bg: #404040;
+    --page-number-bg: #333;
+    --scrollbar-thumb: #444;
+    --scrollbar-thumb-hover: #555;
+    --error-bg: #3d1f1f;
+    --error-text: #ff6b6b;
+    --empty-icon-bg: #333;
+    --kbd-bg: #333;
+    --primary-color: #4da6ff;
+
+    /* Level badge colors for dark mode */
+    --level-1-bg: #0063b1;
+    --level-2-bg: #0b6a0b;
+    --level-3-bg: #4b237a;
+    --level-4-bg: #a8420d;
+    --level-5-bg: #744a27;
+    --level-6-bg: #555;
+  }
+}
+
+/* =============================================================================
+   High Contrast Mode
+   ============================================================================= */
+
+@media (prefers-contrast: high) {
+  .outline-panel {
+    --border-color: #000;
+    --focus-ring: #000;
+  }
+
+  .outline-item.focused {
+    border-width: 3px;
+  }
+
+  .outline-item.current {
+    border-left-width: 4px;
+  }
+}
+
+/* =============================================================================
+   Reduced Motion
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .outline-panel,
+  .outline-panel * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================================================
+   Print Styles
+   ============================================================================= */
+
+@media print {
+  .outline-panel {
+    display: none;
+  }
+}

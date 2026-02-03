@@ -1,0 +1,1323 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --toolbar-height: 48px;
+  --statusbar-height: 32px;
+  --ruler-size: 20px;
+  --bg-color: #f5f5f5;
+  --border-color: #ddd;
+  --text-color: #333;
+  --accent-color: #2563eb;
+  --accent-hover: #1d4ed8;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ============================================================================
+   Toolbar
+   ============================================================================ */
+
+.toolbar {
+  height: var(--toolbar-height);
+  background: white;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.toolbar-group {
+  display: flex;
+  gap: 4px;
+  padding: 0 8px;
+  border-right: 1px solid var(--border-color);
+}
+
+.toolbar-group:last-child {
+  border-right: none;
+}
+
+.toolbar button {
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.15s;
+}
+
+.toolbar button:hover {
+  background: #f0f0f0;
+}
+
+.toolbar button:active {
+  background: #e0e0e0;
+}
+
+/* Toolbar right-aligned group */
+.toolbar-group.toolbar-right {
+  margin-left: auto;
+  border-right: none;
+  border-left: 1px solid var(--border-color);
+}
+
+/* Toolbar icon buttons */
+.toolbar-icon-button {
+  width: 32px;
+  height: 32px;
+  padding: 6px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolbar-icon-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Toolbar dropdown */
+.toolbar-dropdown {
+  position: relative;
+}
+
+.toolbar-dropdown-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+}
+
+.toolbar-dropdown-button .dropdown-arrow {
+  font-size: 10px;
+  color: #666;
+}
+
+.toolbar-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 120px;
+  padding: 4px 0;
+  z-index: 100;
+}
+
+.toolbar-dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  transition: background-color 0.1s;
+}
+
+.toolbar-dropdown-menu button:hover {
+  background: #f5f5f5;
+}
+
+.toolbar-dropdown-menu .dropdown-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+}
+
+/* ============================================================================
+   Editor Wrapper and Container
+   ============================================================================ */
+
+.editor-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: #e8e8e8;
+}
+
+.editor-scroll-container {
+  position: absolute;
+  overflow: auto;
+}
+
+.editor-container {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.editor-canvas {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.editor-canvas:focus {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================================================
+   Ruler Styles
+   ============================================================================ */
+
+.ruler {
+  position: absolute;
+  background: #f8f8f8;
+  border: 1px solid var(--border-color);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.ruler-horizontal {
+  top: 0;
+  left: var(--ruler-size);
+  right: 0;
+  height: var(--ruler-size);
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.ruler-vertical {
+  top: var(--ruler-size);
+  left: 0;
+  bottom: 0;
+  width: var(--ruler-size);
+  border-top: none;
+  border-left: none;
+  border-bottom: none;
+}
+
+.ruler-corner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--ruler-size);
+  height: var(--ruler-size);
+  background: #f0f0f0;
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 11;
+}
+
+.ruler-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f8f8f8;
+}
+
+.ruler-ticks {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  overflow: visible;
+}
+
+.ruler-vertical .ruler-ticks {
+  width: 100%;
+  height: auto;
+}
+
+.ruler-tick {
+  stroke: #999;
+  stroke-width: 1;
+}
+
+.ruler-label {
+  font-size: 9px;
+  fill: #666;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.ruler-margin {
+  fill: #e8e8e8;
+  opacity: 0.8;
+}
+
+.ruler-margin-handle {
+  stroke: #2563eb;
+  stroke-width: 1;
+  cursor: col-resize;
+}
+
+.ruler-vertical .ruler-margin-handle {
+  cursor: row-resize;
+}
+
+/* ============================================================================
+   Status Bar
+   ============================================================================ */
+
+.status-bar {
+  height: var(--statusbar-height);
+  background: white;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.status-bar-left {
+  display: flex;
+  align-items: center;
+}
+
+.status-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-item {
+  padding: 0 12px;
+  border-right: 1px solid var(--border-color);
+}
+
+.status-item:last-child {
+  border-right: none;
+}
+
+.status-item.zoom {
+  margin-left: auto;
+  border-right: none;
+  border-left: 1px solid var(--border-color);
+}
+
+/* ============================================================================
+   View Mode Toggle
+   ============================================================================ */
+
+.view-mode-toggle {
+  display: flex;
+  gap: 2px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.view-mode-button {
+  padding: 4px 6px;
+  border: none;
+  background: transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.view-mode-button:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.view-mode-button.active {
+  background: white;
+  color: var(--accent-color);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================================
+   Zoom Controls
+   ============================================================================ */
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Zoom Buttons */
+.zoom-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.zoom-button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.zoom-button:hover:not(:disabled) {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.zoom-button:active:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.zoom-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Zoom Slider */
+.zoom-slider {
+  width: 100px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #ddd;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.zoom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.zoom-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+/* Zoom Dropdown */
+.zoom-dropdown {
+  position: relative;
+}
+
+.zoom-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #333;
+  min-width: 80px;
+  justify-content: space-between;
+  transition: border-color 0.15s;
+}
+
+.zoom-dropdown-trigger:hover {
+  border-color: #999;
+}
+
+.zoom-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.zoom-dropdown-arrow {
+  font-size: 8px;
+  color: #666;
+}
+
+.zoom-dropdown-menu {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 4px;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 140px;
+  padding: 4px 0;
+  z-index: 100;
+}
+
+.zoom-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-size: 12px;
+  color: #333;
+  transition: background-color 0.1s;
+}
+
+.zoom-dropdown-item:hover {
+  background: #f5f5f5;
+}
+
+.zoom-dropdown-item.active {
+  background: #e8f0fe;
+  color: var(--accent-color);
+}
+
+.zoom-dropdown-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+}
+
+.zoom-dropdown-custom {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+}
+
+.zoom-custom-input {
+  width: 60px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 12px;
+  outline: none;
+}
+
+.zoom-custom-input:focus {
+  border-color: var(--accent-color);
+}
+
+/* ============================================================================
+   Print Layout View Specific Styles
+   ============================================================================ */
+
+.editor-wrapper.print-layout {
+  /* Space for rulers */
+}
+
+.editor-wrapper.web-layout .editor-scroll-container {
+  top: 0;
+  left: 0;
+}
+
+/* Page margins visual guide (shown in canvas) */
+.page-margin-guide {
+  stroke: #e0e0e0;
+  stroke-width: 0.5;
+  stroke-dasharray: 4, 4;
+}
+
+/* ============================================================================
+   Scrollbar Styles
+   ============================================================================ */
+
+.editor-scroll-container::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.editor-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.editor-scroll-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 6px;
+  border: 3px solid #f1f1f1;
+}
+
+.editor-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.editor-scroll-container::-webkit-scrollbar-corner {
+  background: #f1f1f1;
+}
+
+/* =============================================================================
+   Theme Support
+   ============================================================================= */
+
+/* Light theme (default) */
+:root.theme-light,
+:root:not(.theme-dark) {
+  --bg-color: #f5f5f5;
+  --border-color: #ddd;
+  --text-color: #333;
+  --toolbar-bg: white;
+  --editor-bg: white;
+  --statusbar-bg: white;
+  --button-bg: white;
+  --button-hover-bg: #f0f0f0;
+  --button-active-bg: #e0e0e0;
+}
+
+/* Dark theme */
+:root.theme-dark {
+  --bg-color: #1e1e1e;
+  --border-color: #444;
+  --text-color: #e0e0e0;
+  --toolbar-bg: #2d2d2d;
+  --editor-bg: #252525;
+  --statusbar-bg: #2d2d2d;
+  --button-bg: #3d3d3d;
+  --button-hover-bg: #4d4d4d;
+  --button-active-bg: #5d5d5d;
+}
+
+/* Apply theme colors */
+.toolbar {
+  background: var(--toolbar-bg);
+  border-bottom-color: var(--border-color);
+}
+
+.toolbar button {
+  background: var(--button-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
+.toolbar button:hover {
+  background: var(--button-hover-bg);
+}
+
+.toolbar button:active {
+  background: var(--button-active-bg);
+}
+
+.toolbar-group {
+  border-right-color: var(--border-color);
+}
+
+.editor-canvas {
+  background: var(--editor-bg);
+}
+
+.status-bar {
+  background: var(--statusbar-bg);
+  border-top-color: var(--border-color);
+}
+
+.status-item {
+  border-right-color: var(--border-color);
+}
+
+.status-item.zoom {
+  border-left-color: var(--border-color);
+}
+
+/* ============================================================================
+   Accessibility
+   ============================================================================ */
+
+/* Focus visible for keyboard navigation */
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================================================
+   Font Substitution Notice
+   ============================================================================= */
+
+.font-substitution-notice {
+  position: fixed;
+  top: calc(var(--toolbar-height) + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--notice-bg, #fff8e6);
+  border: 1px solid var(--notice-border, #f0c36d);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 600px;
+  width: calc(100% - 32px);
+  z-index: 1000;
+  font-size: 14px;
+}
+
+.font-substitution-notice-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+}
+
+.font-substitution-notice-icon {
+  flex-shrink: 0;
+  color: var(--notice-icon, #b8860b);
+  display: flex;
+  align-items: center;
+}
+
+.font-substitution-notice-message {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.font-substitution-notice-title {
+  font-weight: 500;
+  color: var(--notice-title, #8b6914);
+}
+
+.font-substitution-notice-toggle {
+  background: none;
+  border: none;
+  color: var(--notice-link, #5c4a0f);
+  cursor: pointer;
+  padding: 0;
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.font-substitution-notice-toggle:hover {
+  color: var(--notice-link-hover, #3d3009);
+}
+
+.font-substitution-notice-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.font-substitution-notice-button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-substitution-notice-button-primary {
+  background: var(--notice-button-bg, #d4a017);
+  color: white;
+}
+
+.font-substitution-notice-button-primary:hover {
+  background: var(--notice-button-hover, #b8860b);
+}
+
+.font-substitution-notice-button-dismiss {
+  background: transparent;
+  color: var(--notice-icon, #b8860b);
+  padding: 6px;
+}
+
+.font-substitution-notice-button-dismiss:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.font-substitution-notice-details {
+  border-top: 1px solid var(--notice-border, #f0c36d);
+  padding: 12px 16px;
+}
+
+.font-substitution-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.font-substitution-table th,
+.font-substitution-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--notice-border, #f0c36d);
+}
+
+.font-substitution-table th {
+  font-weight: 500;
+  color: var(--notice-title, #8b6914);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.font-substitution-table tr:last-child td {
+  border-bottom: none;
+}
+
+.font-substitution-notice-footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--notice-border, #f0c36d);
+}
+
+.font-substitution-notice-link {
+  background: none;
+  border: none;
+  color: var(--notice-link, #5c4a0f);
+  cursor: pointer;
+  padding: 0;
+  font-size: 12px;
+  text-decoration: underline;
+}
+
+.font-substitution-notice-link:hover {
+  color: var(--notice-link-hover, #3d3009);
+}
+
+/* Dark theme support for notice */
+:root.theme-dark .font-substitution-notice {
+  --notice-bg: #3d3520;
+  --notice-border: #5c4a0f;
+  --notice-icon: #d4a017;
+  --notice-title: #f0c36d;
+  --notice-link: #f0c36d;
+  --notice-link-hover: #fff8e6;
+  --notice-button-bg: #d4a017;
+  --notice-button-hover: #f0c36d;
+}
+
+/* =============================================================================
+   List Gallery Styles
+   ============================================================================= */
+
+.list-button-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.list-dropdown-arrow {
+  width: 14px;
+  height: 32px;
+  padding: 0;
+  margin-left: -1px;
+  border: 1px solid var(--border-color);
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.list-dropdown-arrow:hover {
+  background: #f0f0f0;
+}
+
+.list-gallery {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  min-width: 280px;
+  padding: 8px;
+}
+
+.list-gallery-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  padding: 4px 8px 8px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 8px;
+}
+
+.list-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.list-gallery-item {
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.list-gallery-item:hover {
+  background: #f5f5f5;
+  border-color: var(--border-color);
+}
+
+.list-gallery-item:active {
+  background: #e8e8e8;
+}
+
+.list-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 10px;
+}
+
+.list-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.list-preview-item .list-marker {
+  width: 14px;
+  text-align: right;
+  font-weight: 500;
+}
+
+.list-preview-item .list-text {
+  color: #999;
+  font-size: 9px;
+}
+
+.list-gallery-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 8px 0;
+}
+
+.list-gallery-action {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  border-radius: 4px;
+  transition: background-color 0.1s;
+}
+
+.list-gallery-action:hover {
+  background: #f5f5f5;
+}
+
+/* Make list button main part have rounded left side */
+.list-button-container .toolbar-icon-button {
+  border-radius: 4px 0 0 4px;
+}
+
+/* =============================================================================
+   Enhanced Accessibility Styles
+   ============================================================================= */
+
+/* Screen reader only - visually hidden but accessible */
+.sr-only,
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip to content - becomes visible on focus */
+.skip-link {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  padding: 1rem;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 10000;
+}
+
+.skip-link:focus {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  width: auto;
+  height: auto;
+  clip: auto;
+  white-space: normal;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced focus indicators for all interactive elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible,
+[role="checkbox"]:focus-visible,
+[role="radio"]:focus-visible,
+[role="menuitem"]:focus-visible,
+[role="option"]:focus-visible,
+[role="tab"]:focus-visible {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Canvas focus indicator */
+.editor-canvas:focus-visible {
+  outline: 3px solid var(--accent-color);
+  outline-offset: -3px;
+}
+
+/* =============================================================================
+   UI Scaling (200% Zoom Support)
+   ============================================================================= */
+
+/* Base font size for rem calculations */
+:root {
+  font-size: 16px; /* Base for rem units */
+
+  /* Touch target minimum sizes (44x44px per WCAG) */
+  --min-touch-target: 2.75rem; /* 44px at default size */
+  --min-touch-target-small: 2rem; /* 32px minimum for compact UI */
+}
+
+/* Ensure minimum touch target size for buttons */
+.toolbar button,
+.status-bar button,
+.zoom-button,
+.dialog button,
+[role="button"] {
+  min-width: var(--min-touch-target-small);
+  min-height: var(--min-touch-target-small);
+}
+
+/* Larger touch targets for primary actions */
+.dialog-footer button,
+.dialog button[type="submit"],
+.primary-action {
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
+  padding: 0.75rem 1.5rem;
+}
+
+/* Text does not overflow containers at 200% zoom */
+.toolbar,
+.status-bar,
+.dialog {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Prevent horizontal scrolling at higher zoom levels */
+.toolbar-group {
+  flex-wrap: wrap;
+}
+
+/* Ensure dropdown menus are accessible at 200% zoom */
+.toolbar-dropdown-menu,
+.zoom-dropdown-menu {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Scale spacing with font size */
+@media (min-resolution: 192dpi) {
+  :root {
+    --toolbar-height: 3rem;
+    --statusbar-height: 2rem;
+    --ruler-size: 1.25rem;
+  }
+}
+
+/* =============================================================================
+   Dialog Accessibility
+   ============================================================================= */
+
+/* Dialog backdrop */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Dialog container */
+[role="dialog"],
+[role="alertdialog"] {
+  background: var(--button-bg, white);
+  border-radius: 0.5rem;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.2);
+  max-width: min(90vw, 40rem);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+/* Dialog header */
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Dialog title - must be focused for screen readers */
+.dialog-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Dialog close button */
+.dialog-close-button {
+  min-width: var(--min-touch-target);
+  min-height: var(--min-touch-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.dialog-close-button:hover {
+  background: var(--button-hover-bg, #f0f0f0);
+}
+
+/* Dialog content */
+.dialog-content {
+  margin-bottom: 1.5rem;
+}
+
+/* Dialog footer with actions */
+.dialog-footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* =============================================================================
+   Toolbar Accessibility
+   ============================================================================= */
+
+/* Toolbar with proper role */
+.toolbar[role="toolbar"] {
+  display: flex;
+  align-items: center;
+}
+
+/* Toolbar groups as role="group" */
+.toolbar-group[role="group"] {
+  display: flex;
+  align-items: center;
+}
+
+/* Toggle buttons with aria-pressed */
+.toolbar button[aria-pressed="true"] {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+/* Expanded dropdowns */
+.toolbar button[aria-expanded="true"] {
+  background: var(--button-hover-bg, #f0f0f0);
+}
+
+/* =============================================================================
+   Live Regions for Announcements
+   ============================================================================= */
+
+/* Live region containers - visually hidden but announced */
+[aria-live="polite"],
+[aria-live="assertive"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Debug mode - make live regions visible */
+.debug-live-regions [aria-live] {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
+  z-index: 10000;
+}
+
+/* =============================================================================
+   Color Independence - Icons/Patterns for State
+   ============================================================================= */
+
+/* Error state - includes icon and border */
+.error-state,
+[aria-invalid="true"] {
+  border-color: #dc2626;
+  border-width: 2px;
+}
+
+.error-state::before,
+[aria-invalid="true"]::before {
+  content: '';
+}
+
+/* Required field indicator */
+.required-field label::after,
+label.required::after {
+  content: ' *';
+  color: #dc2626;
+}
+
+/* Disabled state - pattern */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled,
+[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.05) 2px,
+    rgba(0, 0, 0, 0.05) 4px
+  );
+}
+
+/* Selected state - uses multiple indicators */
+[aria-selected="true"],
+.selected {
+  background-color: rgba(37, 99, 235, 0.1);
+  border-color: var(--accent-color);
+  font-weight: 600;
+}
+
+/* Current item indicator */
+[aria-current="true"],
+[aria-current="page"],
+[aria-current="step"] {
+  border-left: 3px solid var(--accent-color);
+  font-weight: 600;
+}
+
+/* =============================================================================
+   High Contrast Import
+   ============================================================================= */
+
+/* Import high contrast styles */
+@import './high-contrast.css';
+
+/* =============================================================================
+   Print Styles for Accessibility
+   ============================================================================= */
+
+@media print {
+  /* Hide interactive elements */
+  .toolbar,
+  .status-bar,
+  .skip-link,
+  [aria-live] {
+    display: none !important;
+  }
+
+  /* Ensure links are visible */
+  a[href]::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.875em;
+    word-wrap: break-word;
+  }
+
+  /* High contrast for print */
+  * {
+    color: black !important;
+    background: white !important;
+  }
+}

@@ -1,0 +1,369 @@
+/**
+ * DraftView Styles
+ *
+ * Styles for the draft view component with:
+ * - Continuous scroll layout
+ * - Optional style name column
+ * - Simplified text rendering
+ * - Image placeholders
+ * - Dark mode support
+ */
+
+/* =============================================================================
+   Container
+   ============================================================================= */
+
+.draft-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: var(--draft-bg, #ffffff);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  cursor: text;
+}
+
+.draft-view:focus {
+  outline: none;
+}
+
+.draft-view:focus-visible {
+  outline: 2px solid var(--focus-ring, #0078d4);
+  outline-offset: -2px;
+}
+
+/* =============================================================================
+   Style Column (Left Margin)
+   ============================================================================= */
+
+.draft-style-column {
+  position: sticky;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--style-column-bg, #f5f5f5);
+  border-right: 1px solid var(--border-color, #e0e0e0);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.draft-style-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 4px 8px;
+  font-size: 10px;
+  color: var(--style-label-color, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-bottom: 1px dotted var(--border-light, #e8e8e8);
+  display: flex;
+  align-items: flex-start;
+}
+
+/* =============================================================================
+   Content Area
+   ============================================================================= */
+
+.draft-content {
+  position: relative;
+  padding: 20px;
+  min-height: 100%;
+}
+
+.draft-view.show-styles .draft-content {
+  padding-left: 20px;
+}
+
+/* =============================================================================
+   Blocks
+   ============================================================================= */
+
+.draft-block {
+  position: absolute;
+  left: 0;
+  padding: 2px 0;
+  line-height: 1.5;
+}
+
+.draft-block.heading {
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.draft-block.heading-1 {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.draft-block.heading-2 {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.draft-block.heading-3 {
+  font-size: 1.17em;
+  font-weight: bold;
+}
+
+.draft-block.heading-4 {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.draft-block.heading-5 {
+  font-size: 0.83em;
+  font-weight: bold;
+}
+
+.draft-block.heading-6 {
+  font-size: 0.67em;
+  font-weight: bold;
+}
+
+/* =============================================================================
+   Text
+   ============================================================================= */
+
+.draft-text {
+  display: inline;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* =============================================================================
+   Paragraph Marks
+   ============================================================================= */
+
+.paragraph-mark {
+  color: var(--paragraph-mark-color, #0078d4);
+  font-size: 0.9em;
+  opacity: 0.6;
+  margin-left: 2px;
+}
+
+/* =============================================================================
+   Image Placeholders
+   ============================================================================= */
+
+.draft-image-placeholder {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--placeholder-bg, #f0f0f0);
+  border: 1px dashed var(--placeholder-border, #ccc);
+  border-radius: 4px;
+  gap: 4px;
+  vertical-align: middle;
+}
+
+.draft-image-placeholder .placeholder-icon {
+  font-size: 12px;
+  color: var(--placeholder-icon-color, #888);
+  font-weight: 500;
+}
+
+.draft-image-placeholder .placeholder-alt {
+  font-size: 10px;
+  color: var(--placeholder-text-color, #666);
+  text-align: center;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.draft-image {
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 100%;
+  height: auto;
+}
+
+/* =============================================================================
+   Shape Placeholders
+   ============================================================================= */
+
+.draft-shape-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--shape-placeholder-bg, #e8e8f0);
+  border: 1px dashed var(--shape-placeholder-border, #b0b0c0);
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+.draft-shape-placeholder .placeholder-icon {
+  font-size: 12px;
+  color: var(--shape-icon-color, #666);
+  font-weight: 500;
+}
+
+/* =============================================================================
+   Empty State
+   ============================================================================= */
+
+.draft-empty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--empty-text-color, #999);
+  pointer-events: none;
+}
+
+.draft-empty p {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* =============================================================================
+   Options Panel
+   ============================================================================= */
+
+.draft-options-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--options-bg, #f8f8f8);
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.draft-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-primary, #333);
+  cursor: pointer;
+  user-select: none;
+}
+
+.draft-option input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.draft-option:hover {
+  color: var(--text-hover, #0078d4);
+}
+
+/* =============================================================================
+   Scrollbar
+   ============================================================================= */
+
+.draft-view::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.draft-view::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, #f0f0f0);
+}
+
+.draft-view::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #c0c0c0);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.draft-view::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, #a0a0a0);
+  background-clip: content-box;
+}
+
+/* =============================================================================
+   Dark Mode Support
+   ============================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .draft-view {
+    --draft-bg: #1e1e1e;
+    --style-column-bg: #252525;
+    --style-label-color: #888;
+    --border-color: #3c3c3c;
+    --border-light: #333;
+    --text-primary: #e0e0e0;
+    --text-hover: #4da6ff;
+    --placeholder-bg: #2a2a2a;
+    --placeholder-border: #404040;
+    --placeholder-icon-color: #777;
+    --placeholder-text-color: #888;
+    --shape-placeholder-bg: #2a2a35;
+    --shape-placeholder-border: #404050;
+    --shape-icon-color: #888;
+    --paragraph-mark-color: #4da6ff;
+    --empty-text-color: #666;
+    --options-bg: #252525;
+    --scrollbar-track: #252525;
+    --scrollbar-thumb: #444;
+    --scrollbar-thumb-hover: #555;
+    --focus-ring: #4da6ff;
+  }
+}
+
+/* =============================================================================
+   High Contrast Mode
+   ============================================================================= */
+
+@media (prefers-contrast: high) {
+  .draft-view {
+    --draft-bg: #fff;
+    --style-column-bg: #f0f0f0;
+    --border-color: #000;
+    --placeholder-border: #000;
+    --shape-placeholder-border: #000;
+  }
+
+  .draft-style-label {
+    font-weight: 600;
+  }
+
+  .draft-image-placeholder,
+  .draft-shape-placeholder {
+    border-style: solid;
+    border-width: 2px;
+  }
+}
+
+/* =============================================================================
+   Reduced Motion
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .draft-view {
+    scroll-behavior: auto;
+  }
+}
+
+/* =============================================================================
+   Print Styles
+   ============================================================================= */
+
+@media print {
+  .draft-view {
+    overflow: visible;
+    height: auto;
+  }
+
+  .draft-style-column {
+    display: none;
+  }
+
+  .draft-options-panel {
+    display: none;
+  }
+
+  .paragraph-mark {
+    display: none;
+  }
+}

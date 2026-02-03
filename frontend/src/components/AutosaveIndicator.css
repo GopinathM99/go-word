@@ -1,0 +1,147 @@
+/* Autosave Indicator Styles */
+
+.autosave-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.autosave-indicator--clickable {
+  cursor: pointer;
+}
+
+.autosave-indicator--clickable:hover {
+  background: var(--color-bg-secondary, #f5f5f5);
+}
+
+/* State-specific styles */
+.autosave-indicator--saved {
+  color: #16a34a;
+}
+
+.autosave-indicator--saving {
+  color: var(--color-primary, #0066cc);
+}
+
+.autosave-indicator--unsaved {
+  color: #d97706;
+}
+
+.autosave-indicator--error {
+  color: #dc2626;
+}
+
+/* Icon styles */
+.autosave-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  font-size: 12px;
+}
+
+.autosave-icon--sync {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.autosave-icon--edit {
+  font-size: 8px;
+}
+
+/* Label styles */
+.autosave-label {
+  font-weight: 500;
+}
+
+/* Description styles */
+.autosave-description {
+  color: var(--color-text-secondary, #666666);
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+/* Compact indicator for status bar */
+.autosave-compact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 12px;
+  cursor: default;
+}
+
+.autosave-compact--saved {
+  color: #16a34a;
+}
+
+.autosave-compact--saving {
+  color: var(--color-primary, #0066cc);
+  animation: spin 1.5s linear infinite;
+}
+
+.autosave-compact--unsaved {
+  color: #d97706;
+  font-size: 8px;
+}
+
+.autosave-compact--error {
+  color: #dc2626;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .autosave-indicator--clickable:hover {
+    background: #2a2a2a;
+  }
+
+  .autosave-indicator--saved {
+    color: #4ade80;
+  }
+
+  .autosave-indicator--saving {
+    color: #60a5fa;
+  }
+
+  .autosave-indicator--unsaved {
+    color: #fbbf24;
+  }
+
+  .autosave-indicator--error {
+    color: #f87171;
+  }
+
+  .autosave-description {
+    color: #a0a0a0;
+  }
+
+  .autosave-compact--saved {
+    color: #4ade80;
+  }
+
+  .autosave-compact--saving {
+    color: #60a5fa;
+  }
+
+  .autosave-compact--unsaved {
+    color: #fbbf24;
+  }
+
+  .autosave-compact--error {
+    color: #f87171;
+  }
+}

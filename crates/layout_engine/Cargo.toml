@@ -1,0 +1,17 @@
+[package]
+name = "layout_engine"
+version.workspace = true
+edition.workspace = true
+description = "Layout engine with line breaking, pagination, and BiDi support"
+
+[dependencies]
+doc_model.workspace = true
+text_engine.workspace = true
+serde.workspace = true
+uuid.workspace = true
+thiserror.workspace = true
+unicode-bidi.workspace = true
+unicode-linebreak.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true

@@ -1,0 +1,1125 @@
+/* =============================================================================
+   Symbol Picker Styles
+   Comprehensive styling for the symbol picker and dialog components
+   ============================================================================= */
+
+/* =============================================================================
+   Symbol Picker Component
+   ============================================================================= */
+
+.symbol-picker {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.symbol-picker.compact {
+  max-width: 400px;
+}
+
+/* =============================================================================
+   Search Container
+   ============================================================================= */
+
+.symbol-search-container {
+  position: relative;
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.symbol-search-input {
+  width: 100%;
+  padding: 10px 36px 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.symbol-search-input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.symbol-search-input::placeholder {
+  color: #999;
+}
+
+.symbol-search-clear {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.symbol-search-clear:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+/* =============================================================================
+   Category Tabs
+   ============================================================================= */
+
+.symbol-category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fafafa;
+}
+
+.category-tab {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.category-tab:hover {
+  background-color: #e8e8e8;
+  color: #333;
+}
+
+.category-tab.active {
+  background-color: #0066cc;
+  color: #ffffff;
+  border-color: #0066cc;
+}
+
+.category-tab:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* =============================================================================
+   Recent Symbols Section
+   ============================================================================= */
+
+.symbol-recent-section {
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+}
+
+.symbol-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.clear-recent-button {
+  font-size: 11px;
+  color: #666;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.clear-recent-button:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.symbol-recent-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.symbol-count {
+  font-size: 11px;
+  color: #888;
+}
+
+/* =============================================================================
+   Symbol Grid
+   ============================================================================= */
+
+.symbol-grid-container {
+  flex: 1;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.symbol-grid-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.symbol-grid-scroll {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 300px;
+  padding: 4px;
+}
+
+.symbol-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+}
+
+.symbol-picker.compact .symbol-grid {
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.unicode-grid {
+  grid-template-columns: repeat(16, 1fr);
+}
+
+.symbol-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 18px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.symbol-button:hover {
+  background-color: #e8f0fe;
+  border-color: #0066cc;
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+.symbol-button:focus {
+  outline: none;
+}
+
+.symbol-button:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.symbol-button.focused,
+.symbol-button.selected {
+  background-color: #0066cc;
+  border-color: #0066cc;
+  color: #ffffff;
+}
+
+.symbol-button.recent {
+  background-color: #f0f4f8;
+}
+
+.symbol-char {
+  line-height: 1;
+}
+
+/* =============================================================================
+   Empty State
+   ============================================================================= */
+
+.symbol-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  color: #888;
+  font-size: 14px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* =============================================================================
+   Symbol Info Footer
+   ============================================================================= */
+
+.symbol-info-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #fafafa;
+  min-height: 40px;
+}
+
+.symbol-preview {
+  font-size: 24px;
+  width: 36px;
+  text-align: center;
+}
+
+.symbol-name {
+  flex: 1;
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.symbol-code {
+  font-size: 12px;
+  font-family: monospace;
+  color: #666;
+  background-color: #e8e8e8;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.symbol-hint {
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+}
+
+/* =============================================================================
+   Quick Symbol Buttons
+   ============================================================================= */
+
+.quick-symbol-buttons {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+}
+
+.quick-symbol-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 14px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.quick-symbol-button:hover {
+  background-color: #e8e8e8;
+  border-color: #ccc;
+}
+
+.quick-symbol-button:active {
+  background-color: #d0d0d0;
+}
+
+/* =============================================================================
+   Symbol Dialog Overlay
+   ============================================================================= */
+
+.symbol-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* =============================================================================
+   Symbol Dialog
+   ============================================================================= */
+
+.symbol-dialog {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  width: 720px;
+  max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.symbol-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.symbol-dialog-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+/* =============================================================================
+   Dialog Tabs
+   ============================================================================= */
+
+.symbol-dialog-tabs {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fafafa;
+}
+
+.dialog-tab {
+  flex: 1;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dialog-tab:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.dialog-tab.active {
+  color: #0066cc;
+  border-bottom-color: #0066cc;
+  background-color: #ffffff;
+}
+
+/* =============================================================================
+   Dialog Content
+   ============================================================================= */
+
+.symbol-dialog-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.common-symbols-tab {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.common-symbols-tab .symbol-search-container {
+  flex-shrink: 0;
+}
+
+.common-symbols-tab .symbol-category-tabs {
+  flex-shrink: 0;
+}
+
+.common-symbols-tab .symbol-recent-section {
+  flex-shrink: 0;
+}
+
+.common-symbols-tab .symbol-grid-section {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+}
+
+.common-symbols-tab .symbol-grid-scroll {
+  flex: 1;
+  overflow-y: auto;
+  max-height: none;
+}
+
+/* =============================================================================
+   Unicode Browser Tab
+   ============================================================================= */
+
+.unicode-browser-tab {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.unicode-browser-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.unicode-block-list {
+  width: 280px;
+  padding: 16px;
+  border-right: 1px solid #e0e0e0;
+  background-color: #fafafa;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.block-list-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.block-select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+.block-select:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.code-point-input-section {
+  margin-top: auto;
+}
+
+.code-point-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.code-point-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.code-point-input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: monospace;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.code-point-input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.code-point-insert-button {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  background-color: #0066cc;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.code-point-insert-button:hover:not(:disabled) {
+  background-color: #0052a3;
+}
+
+.code-point-insert-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.unicode-character-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.unicode-search-container {
+  margin-bottom: 12px;
+}
+
+.unicode-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: #666;
+  text-align: center;
+  padding: 40px;
+}
+
+.unicode-empty-state p {
+  margin: 8px 0;
+}
+
+/* =============================================================================
+   Dialog Footer
+   ============================================================================= */
+
+.symbol-dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #fafafa;
+}
+
+.symbol-preview-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.preview-character {
+  font-size: 48px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.preview-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.preview-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.preview-code {
+  font-size: 13px;
+  font-family: monospace;
+  color: #666;
+}
+
+.preview-placeholder {
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.cancel-button,
+.insert-button {
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-button {
+  background-color: #ffffff;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.cancel-button:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.insert-button {
+  background-color: #0066cc;
+  color: #ffffff;
+  border: 1px solid #0066cc;
+}
+
+.insert-button:hover:not(:disabled) {
+  background-color: #0052a3;
+  border-color: #0052a3;
+}
+
+.insert-button:disabled {
+  background-color: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* =============================================================================
+   Dark Mode Support
+   ============================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .symbol-picker,
+  .symbol-dialog {
+    background-color: #2d2d2d;
+    border-color: #444;
+  }
+
+  .symbol-search-container {
+    border-bottom-color: #444;
+  }
+
+  .symbol-search-input {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #ffffff;
+  }
+
+  .symbol-search-input:focus {
+    border-color: #4da6ff;
+    box-shadow: 0 0 0 3px rgba(77, 166, 255, 0.2);
+  }
+
+  .symbol-search-input::placeholder {
+    color: #888;
+  }
+
+  .symbol-search-clear {
+    color: #aaa;
+  }
+
+  .symbol-search-clear:hover {
+    background-color: #444;
+    color: #ffffff;
+  }
+
+  .symbol-category-tabs {
+    background-color: #252525;
+    border-bottom-color: #444;
+  }
+
+  .category-tab {
+    color: #ccc;
+  }
+
+  .category-tab:hover {
+    background-color: #3d3d3d;
+    color: #ffffff;
+  }
+
+  .category-tab.active {
+    background-color: #0066cc;
+    color: #ffffff;
+  }
+
+  .symbol-recent-section {
+    background-color: #333;
+    border-bottom-color: #444;
+  }
+
+  .section-title {
+    color: #aaa;
+  }
+
+  .clear-recent-button {
+    color: #888;
+  }
+
+  .clear-recent-button:hover {
+    background-color: #444;
+    color: #ffffff;
+  }
+
+  .symbol-button {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #ffffff;
+  }
+
+  .symbol-button:hover {
+    background-color: #1a3d5c;
+    border-color: #4da6ff;
+  }
+
+  .symbol-button.focused,
+  .symbol-button.selected {
+    background-color: #0066cc;
+    border-color: #0066cc;
+  }
+
+  .symbol-button.recent {
+    background-color: #363636;
+  }
+
+  .symbol-info-footer {
+    background-color: #252525;
+    border-top-color: #444;
+  }
+
+  .symbol-name {
+    color: #eee;
+  }
+
+  .symbol-code {
+    background-color: #444;
+    color: #ccc;
+  }
+
+  .symbol-hint {
+    color: #888;
+  }
+
+  .quick-symbol-button:hover {
+    background-color: #3d3d3d;
+    border-color: #555;
+  }
+
+  /* Dialog Dark Mode */
+  .symbol-dialog-header {
+    border-bottom-color: #444;
+  }
+
+  .symbol-dialog-header h2 {
+    color: #ffffff;
+  }
+
+  .close-button {
+    color: #aaa;
+  }
+
+  .close-button:hover {
+    background-color: #444;
+    color: #ffffff;
+  }
+
+  .symbol-dialog-tabs {
+    background-color: #252525;
+    border-bottom-color: #444;
+  }
+
+  .dialog-tab {
+    color: #ccc;
+  }
+
+  .dialog-tab:hover {
+    background-color: #333;
+    color: #ffffff;
+  }
+
+  .dialog-tab.active {
+    color: #4da6ff;
+    border-bottom-color: #4da6ff;
+    background-color: #2d2d2d;
+  }
+
+  .unicode-block-list {
+    background-color: #252525;
+    border-right-color: #444;
+  }
+
+  .block-list-label,
+  .code-point-label {
+    color: #aaa;
+  }
+
+  .block-select {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #ffffff;
+  }
+
+  .block-select:focus {
+    border-color: #4da6ff;
+    box-shadow: 0 0 0 3px rgba(77, 166, 255, 0.2);
+  }
+
+  .code-point-input {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #ffffff;
+  }
+
+  .code-point-input:focus {
+    border-color: #4da6ff;
+    box-shadow: 0 0 0 3px rgba(77, 166, 255, 0.2);
+  }
+
+  .unicode-empty-state {
+    color: #888;
+  }
+
+  .symbol-dialog-footer {
+    background-color: #252525;
+    border-top-color: #444;
+  }
+
+  .preview-character {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #ffffff;
+  }
+
+  .preview-name {
+    color: #ffffff;
+  }
+
+  .preview-code {
+    color: #aaa;
+  }
+
+  .preview-placeholder {
+    color: #666;
+  }
+
+  .cancel-button {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #ffffff;
+  }
+
+  .cancel-button:hover {
+    background-color: #4d4d4d;
+    border-color: #666;
+  }
+
+  .symbol-empty-state {
+    color: #888;
+  }
+
+  .symbol-count {
+    color: #666;
+  }
+}
+
+/* =============================================================================
+   High Contrast Mode Support
+   ============================================================================= */
+
+.theme-high-contrast .symbol-picker,
+.theme-high-contrast .symbol-dialog {
+  background-color: #000000;
+  border: 2px solid #ffffff;
+}
+
+.theme-high-contrast .symbol-search-input {
+  background-color: #000000;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
+
+.theme-high-contrast .category-tab {
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+
+.theme-high-contrast .category-tab.active {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.theme-high-contrast .symbol-button {
+  background-color: #000000;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
+
+.theme-high-contrast .symbol-button:hover,
+.theme-high-contrast .symbol-button.focused,
+.theme-high-contrast .symbol-button.selected {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* =============================================================================
+   Focus States for Accessibility
+   ============================================================================= */
+
+.symbol-search-input:focus-visible,
+.category-tab:focus-visible,
+.symbol-button:focus-visible,
+.quick-symbol-button:focus-visible,
+.dialog-tab:focus-visible,
+.block-select:focus-visible,
+.code-point-input:focus-visible,
+.cancel-button:focus-visible,
+.insert-button:focus-visible,
+.close-button:focus-visible,
+.clear-recent-button:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .symbol-search-input:focus-visible,
+  .category-tab:focus-visible,
+  .symbol-button:focus-visible,
+  .quick-symbol-button:focus-visible,
+  .dialog-tab:focus-visible,
+  .block-select:focus-visible,
+  .code-point-input:focus-visible,
+  .cancel-button:focus-visible,
+  .insert-button:focus-visible,
+  .close-button:focus-visible,
+  .clear-recent-button:focus-visible {
+    outline-color: #4da6ff;
+  }
+}
+
+/* =============================================================================
+   Responsive Design
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  .symbol-dialog {
+    width: 100%;
+    max-width: none;
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .symbol-grid {
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  .unicode-grid {
+    grid-template-columns: repeat(10, 1fr);
+  }
+
+  .unicode-browser-layout {
+    flex-direction: column;
+  }
+
+  .unicode-block-list {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .symbol-category-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .symbol-category-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .symbol-dialog-footer {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .symbol-preview-section {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dialog-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .dialog-actions button {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .symbol-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .unicode-grid {
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  .symbol-button {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .preview-character {
+    font-size: 36px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* =============================================================================
+   Print Styles (hide symbol picker in print)
+   ============================================================================= */
+
+@media print {
+  .symbol-picker,
+  .symbol-dialog,
+  .symbol-dialog-overlay {
+    display: none !important;
+  }
+}

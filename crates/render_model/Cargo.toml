@@ -1,0 +1,15 @@
+[package]
+name = "render_model"
+version.workspace = true
+edition.workspace = true
+description = "Render model types and layout-to-render conversion"
+
+[dependencies]
+layout_engine.workspace = true
+doc_model.workspace = true
+serde.workspace = true
+uuid.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true

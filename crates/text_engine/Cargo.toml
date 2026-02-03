@@ -1,0 +1,15 @@
+[package]
+name = "text_engine"
+version.workspace = true
+edition.workspace = true
+description = "Text shaping, font discovery, and metrics"
+
+[dependencies]
+serde.workspace = true
+thiserror.workspace = true
+rustybuzz.workspace = true
+unicode-segmentation.workspace = true
+font-kit.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true

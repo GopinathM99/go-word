@@ -1,0 +1,306 @@
+/**
+ * Remote Cursors Styles
+ *
+ * Styles for displaying remote user cursors and selections
+ * in a collaborative editing environment.
+ */
+
+/* =============================================================================
+   Container
+   ============================================================================= */
+
+.remote-cursors-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.remote-selections-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.remote-cursors-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* =============================================================================
+   Cursor Styles
+   ============================================================================= */
+
+.remote-cursor {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.remote-cursor-caret {
+  width: 2px;
+  min-height: 16px;
+  border-radius: 1px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.remote-cursor-caret.blink {
+  animation: cursor-blink 1s ease-in-out infinite;
+}
+
+@keyframes cursor-blink {
+  0%, 40% {
+    opacity: 1;
+  }
+  50%, 90% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Flag (small triangle connecting label to caret) */
+.remote-cursor-flag {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid;
+  border-top-color: inherit;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.remote-cursor:hover .remote-cursor-flag,
+.remote-cursor-flag.visible {
+  opacity: 1;
+}
+
+/* Cursor label with user name */
+.remote-cursor-label {
+  position: absolute;
+  top: -22px;
+  left: 0;
+  padding: 2px 8px;
+  border-radius: 4px 4px 4px 0;
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.remote-cursor:hover .remote-cursor-label,
+.remote-cursor-label.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.remote-cursor-name {
+  vertical-align: middle;
+}
+
+/* =============================================================================
+   Typing Indicator
+   ============================================================================= */
+
+.typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.typing-dot {
+  width: 3px;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  margin: 0 1px;
+  animation: typing-bounce 1.4s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  30% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+/* Alternative typing dots animation */
+@keyframes typing-dots {
+  0%, 20% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0;
+  }
+  80%, 100% {
+    opacity: 1;
+  }
+}
+
+/* =============================================================================
+   Selection Styles
+   ============================================================================= */
+
+.remote-selection {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.remote-selection-rect {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 2px;
+  mix-blend-mode: multiply;
+}
+
+/* Dark mode adjustment */
+@media (prefers-color-scheme: dark) {
+  .remote-selection-rect {
+    mix-blend-mode: screen;
+    opacity: 0.25;
+  }
+}
+
+/* =============================================================================
+   Accessibility
+   ============================================================================= */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .remote-cursor-caret {
+    width: 3px;
+  }
+
+  .remote-cursor-label {
+    font-weight: 700;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .remote-selection-rect {
+    opacity: 0.4;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .remote-cursor-caret.blink {
+    animation: none;
+    opacity: 1;
+  }
+
+  .typing-dot {
+    animation: none;
+    opacity: 1;
+  }
+
+  .remote-cursor-label {
+    transition: none;
+  }
+
+  .remote-cursor-flag {
+    transition: none;
+  }
+}
+
+/* =============================================================================
+   Print Styles
+   ============================================================================= */
+
+@media print {
+  .remote-cursors-container {
+    display: none;
+  }
+}
+
+/* =============================================================================
+   Animation Classes (for programmatic control)
+   ============================================================================= */
+
+.remote-cursor.entering {
+  animation: cursor-enter 0.2s ease-out;
+}
+
+.remote-cursor.leaving {
+  animation: cursor-leave 0.2s ease-in forwards;
+}
+
+@keyframes cursor-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes cursor-leave {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+.remote-selection.entering .remote-selection-rect {
+  animation: selection-enter 0.15s ease-out;
+}
+
+@keyframes selection-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.3;
+  }
+}
