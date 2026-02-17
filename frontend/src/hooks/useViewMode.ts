@@ -74,9 +74,9 @@ export interface UseViewModeReturn {
 // Constants
 // =============================================================================
 
-const STORAGE_KEY_PREFIX = 'ms-word-view-mode-';
-const DRAFT_OPTIONS_STORAGE_KEY = 'ms-word-draft-options-';
-const OUTLINE_OPTIONS_STORAGE_KEY = 'ms-word-outline-options-';
+const STORAGE_KEY_PREFIX = 'go-word-view-mode-';
+const DRAFT_OPTIONS_STORAGE_KEY = 'go-word-draft-options-';
+const OUTLINE_OPTIONS_STORAGE_KEY = 'go-word-outline-options-';
 const DEFAULT_VIEW_MODE: ViewMode = 'print_layout';
 
 // =============================================================================

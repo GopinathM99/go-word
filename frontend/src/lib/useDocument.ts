@@ -8,6 +8,18 @@ export function useDocument() {
   const [selection, setSelection] = useState<Selection | null>(null);
   const [renderModel, setRenderModel] = useState<RenderModel | null>(null);
 
+  // Helper to refresh the render model
+  const refreshLayout = useCallback(async (docId: string) => {
+    const viewport: Viewport = {
+      x: 0,
+      y: 0,
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+    const model = await invoke<RenderModel>('get_layout', { docId, viewport });
+    setRenderModel(model);
+  }, []);
+
   // Create a new document on mount
   useEffect(() => {
     const initDocument = async () => {
@@ -23,22 +35,62 @@ export function useDocument() {
           wordCount: 0,
           language: 'English',
         });
-
-        // Get initial layout
-        const viewport: Viewport = {
-          x: 0,
-          y: 0,
-          width: window.innerWidth,
-          height: window.innerHeight,
-        };
-        const model = await invoke<RenderModel>('get_layout', { docId: id, viewport });
-        setRenderModel(model);
+        await refreshLayout(id);
       } catch (e) {
         console.error('Failed to create document:', e);
       }
     };
 
     initDocument();
+  }, [refreshLayout]);
+
+  // Create a new blank document (reset state)
+  const newDocument = useCallback(async () => {
+    try {
+      const id = await invoke<string>('create_document');
+      setDocumentId(id);
+      setDocument({
+        id,
+        path: null,
+        dirty: false,
+        currentPage: 1,
+        totalPages: 1,
+        wordCount: 0,
+        language: 'English',
+      });
+      setSelection(null);
+      await refreshLayout(id);
+    } catch (e) {
+      console.error('Failed to create new document:', e);
+    }
+  }, [refreshLayout]);
+
+  // Load a document from a file path
+  const loadDocument = useCallback(async (path: string) => {
+    try {
+      const docId = await invoke<string>('load_document', { path });
+      if (docId) {
+        setDocumentId(docId);
+        setDocument({
+          id: docId,
+          path,
+          dirty: false,
+          currentPage: 1,
+          totalPages: 1,
+          wordCount: 0,
+          language: 'English',
+        });
+        setSelection(null);
+        await refreshLayout(docId);
+      }
+    } catch (e) {
+      console.error('Failed to load document:', e);
+    }
+  }, [refreshLayout]);
+
+  // Update document path (e.g., after Save As)
+  const updateDocumentPath = useCallback((path: string) => {
+    setDocument(prev => prev ? { ...prev, path, dirty: false } : null);
   }, []);
 
   // Execute a command
@@ -77,23 +129,19 @@ export function useDocument() {
       }
 
       // Refresh render model after command
-      const viewport: Viewport = {
-        x: 0,
-        y: 0,
-        width: window.innerWidth,
-        height: window.innerHeight,
-      };
-      const model = await invoke<RenderModel>('get_layout', { docId: documentId, viewport });
-      setRenderModel(model);
+      await refreshLayout(documentId);
     } catch (e) {
       console.error('Command failed:', e);
     }
-  }, [documentId, document?.path]);
+  }, [documentId, document?.path, refreshLayout]);
 
   return {
     document,
     selection,
     renderModel,
     executeCommand,
+    newDocument,
+    loadDocument,
+    updateDocumentPath,
   };
 }

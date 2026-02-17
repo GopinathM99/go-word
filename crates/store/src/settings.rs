@@ -1,7 +1,7 @@
 //! Application settings management
 //!
 //! This module provides settings persistence, loading, and updating
-//! for the MS Word application.
+//! for the Go Word application.
 
 use crate::Result;
 use serde::{Deserialize, Serialize};

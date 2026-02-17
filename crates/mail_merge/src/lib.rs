@@ -1,7 +1,7 @@
 //! Mail Merge Data Sources
 //!
 //! This crate provides functionality for loading and parsing data sources
-//! for mail merge operations in the MS Word clone application.
+//! for mail merge operations in Go Word.
 //!
 //! # Features
 //!

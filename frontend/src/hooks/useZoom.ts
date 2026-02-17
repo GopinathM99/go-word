@@ -86,7 +86,7 @@ export const MIN_ZOOM = 0.25;
 export const MAX_ZOOM = 5.0;
 export const ZOOM_STEP = 0.1;
 
-const STORAGE_KEY_PREFIX = 'ms-word-zoom-';
+const STORAGE_KEY_PREFIX = 'go-word-zoom-';
 
 // =============================================================================
 // Helper Functions

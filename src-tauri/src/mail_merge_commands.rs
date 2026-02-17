@@ -91,6 +91,7 @@ impl From<&DataSource> for DataSourceSummaryDto {
         let source_type = match &ds.source_type {
             mail_merge::DataSourceType::Csv { .. } => "csv",
             mail_merge::DataSourceType::Json { .. } => "json",
+            mail_merge::DataSourceType::Xlsx { .. } => "xlsx",
             mail_merge::DataSourceType::Inline { .. } => "inline",
         };
         Self {

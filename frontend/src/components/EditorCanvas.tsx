@@ -67,7 +67,7 @@ export function EditorCanvas({
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [caretVisible, setCaretVisible] = useState(true);
   const caretBlinkRef = useRef<number | null>(null);
-  const lastKeyTimeRef = useRef<number>(0);
+  const lastKeyTimeRef = useRef<number>(Date.now());
   const [localCompositionState, setLocalCompositionState] = useState<CompositionState>({
     isComposing: false,
     compositionText: '',
@@ -77,6 +77,29 @@ export function EditorCanvas({
   // Image cache for rendering
   const imageCacheRef = useRef<Map<string, HTMLImageElement>>(new Map());
   const loadingImagesRef = useRef<Set<string>>(new Set());
+  const forceRenderRef = useRef<(() => void) | null>(null);
+
+  // Initialize render scheduler
+  const {
+    setCanvas,
+    setRenderModel: setSchedulerRenderModel,
+    setPageLayouts,
+    markPageDirty,
+    markPagesDirty,
+    markGlobalDirty,
+    handleScroll: schedulerHandleScroll,
+    getVisiblePageIndices,
+    forceRender,
+  } = useRenderScheduler({
+    bufferPages: 2,
+    enableCaching: true,
+    onRenderComplete: () => {
+      // Optional: trigger any post-render callbacks
+    },
+  });
+
+  // Keep forceRender ref up to date
+  forceRenderRef.current = forceRender;
 
   // Load an image for rendering (called when image not in cache)
   const loadImageForRendering = useCallback((resourceId: string) => {
@@ -95,7 +118,7 @@ export function EditorCanvas({
       imageCacheRef.current.set(resourceId, img);
       loadingImagesRef.current.delete(resourceId);
       // Trigger re-render to show the loaded image
-      forceRender();
+      forceRenderRef.current?.();
     };
     img.onerror = () => {
       loadingImagesRef.current.delete(resourceId);
@@ -106,27 +129,7 @@ export function EditorCanvas({
     // In production, this would be:
     // invoke('get_image_data_url', { resourceId }).then(dataUrl => { img.src = dataUrl; });
     img.src = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect fill='%23ddd' width='100' height='100'/><text x='50' y='50' text-anchor='middle' fill='%23999' font-size='14'>Image</text></svg>`;
-  }, [forceRender]);
-
-  // Initialize render scheduler
-  const {
-    scheduler,
-    setCanvas,
-    setRenderModel: setSchedulerRenderModel,
-    setPageLayouts,
-    markPageDirty,
-    markPagesDirty,
-    markGlobalDirty,
-    handleScroll: schedulerHandleScroll,
-    getVisiblePageIndices,
-    forceRender,
-  } = useRenderScheduler({
-    bufferPages: 2,
-    enableCaching: true,
-    onRenderComplete: () => {
-      // Optional: trigger any post-render callbacks
-    },
-  });
+  }, []);
 
   // Handle composition state changes
   const handleCompositionChange = useCallback(
@@ -172,6 +175,8 @@ export function EditorCanvas({
 
   // Page render cache for memory management
   const pageRenderCache = usePageRenderCache(10);
+  const pageRenderCacheRef = useRef(pageRenderCache);
+  useEffect(() => { pageRenderCacheRef.current = pageRenderCache; }, [pageRenderCache]);
 
   // Use virtualized pages hook for efficient rendering
   const {
@@ -830,18 +835,63 @@ export function EditorCanvas({
     ) => {
       if (!visible) return;
 
+      let caretFound = false;
       for (const layout of layouts) {
         for (const item of layout.page.items) {
           if (item.type === 'Caret') {
-            ctx.fillStyle = colorToCss(item.color);
-            ctx.fillRect(
-              (layout.x + item.x * currentZoom) - offsetX,
-              (layout.y + item.y * currentZoom) - offsetY,
-              2, // Caret width
-              item.height * currentZoom
-            );
+            caretFound = true;
+            // Use item color if available, fallback to black
+            try {
+              ctx.fillStyle = item.color ? colorToCss(item.color) : 'rgba(0, 0, 0, 1)';
+            } catch {
+              ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+            }
+
+            let caretX: number;
+            const caretY = (layout.y + item.y * currentZoom) - offsetY;
+            const caretHeight = (item.height || 20) * currentZoom;
+
+            // Use measureText for accurate proportional-font caret positioning
+            if (item.line_text !== undefined && item.char_offset_in_line !== undefined) {
+              // Find a GlyphRun on the same line to match font settings
+              let fontFamily = 'sans-serif';
+              let fontSize = 14;
+              let bold = false;
+              let italic = false;
+              const MARGIN_PX = 96; // Must match backend MARGIN constant
+
+              for (const gi of layout.page.items) {
+                if (gi.type === 'GlyphRun' && Math.abs(gi.y - (item.y + 16)) < 2) {
+                  fontFamily = gi.font_family || 'sans-serif';
+                  fontSize = gi.font_size;
+                  bold = gi.bold;
+                  italic = gi.italic;
+                  break;
+                }
+              }
+
+              const fontStyle = italic ? 'italic' : 'normal';
+              const fontWeight = bold ? 'bold' : 'normal';
+              ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+              ctx.textBaseline = 'alphabetic';
+
+              const textBeforeCursor = item.line_text.substring(0, item.char_offset_in_line);
+              const measuredWidth = ctx.measureText(textBeforeCursor).width;
+              caretX = (layout.x + (MARGIN_PX + measuredWidth) * currentZoom) - offsetX;
+            } else {
+              // Fallback to backend-provided x position
+              caretX = (layout.x + item.x * currentZoom) - offsetX;
+            }
+
+            ctx.fillRect(caretX, caretY, 2, caretHeight);
           }
         }
+      }
+
+      // Debug: log once if no caret found (helps diagnose cursor visibility issues)
+      if (!caretFound && layouts.length > 0) {
+        console.warn('[EditorCanvas] renderCarets: No Caret item found in page items. Items types:',
+          layouts.flatMap(l => l.page.items.map(i => i.type)));
       }
     },
     []
@@ -865,7 +915,32 @@ export function EditorCanvas({
             ctx.textBaseline = 'alphabetic';
 
             const text = localCompositionState.compositionText;
-            const x = (layout.x + item.x * currentZoom) - offsetX;
+
+            // Calculate accurate x position using measureText (same as renderCarets)
+            let caretPixelX: number;
+            const MARGIN_PX = 96;
+            if (item.line_text !== undefined && item.char_offset_in_line !== undefined) {
+              // Find matching GlyphRun for font settings
+              let gFont = `${fontSize}px sans-serif`;
+              for (const gi of layout.page.items) {
+                if (gi.type === 'GlyphRun' && Math.abs(gi.y - (item.y + 16)) < 2) {
+                  const fs = gi.italic ? 'italic' : 'normal';
+                  const fw = gi.bold ? 'bold' : 'normal';
+                  gFont = `${fs} ${fw} ${gi.font_size}px ${gi.font_family || 'sans-serif'}`;
+                  break;
+                }
+              }
+              ctx.font = gFont;
+              const textBeforeCursor = item.line_text.substring(0, item.char_offset_in_line);
+              const measuredWidth = ctx.measureText(textBeforeCursor).width;
+              caretPixelX = (layout.x + (MARGIN_PX + measuredWidth) * currentZoom) - offsetX;
+              // Reset font for composition text
+              ctx.font = `${fontSize}px sans-serif`;
+            } else {
+              caretPixelX = (layout.x + item.x * currentZoom) - offsetX;
+            }
+
+            const x = caretPixelX;
             const y = (layout.y + (item.y + item.height - 4) * currentZoom) - offsetY;
 
             // Draw the composition text
@@ -949,9 +1024,10 @@ export function EditorCanvas({
       }
 
       // Double-check with geometric bounds for safety
-      const scaledY = y * zoom;
+      // Note: layout.y is already in screen-space (accounts for zoom in page stacking),
+      // so we don't multiply by zoom again for the visibility check
+      const pageTopPos = y - scrollOffset.y;
       const scaledHeight = page.height * zoom;
-      const pageTopPos = scaledY - scrollOffset.y;
       const pageBottomPos = pageTopPos + scaledHeight;
 
       // Skip pages that are definitely off-screen (with generous buffer)
@@ -965,7 +1041,7 @@ export function EditorCanvas({
       renderPage(ctx, page, unzoomedX, unzoomedY);
 
       // Mark page as rendered in cache for memory management
-      pageRenderCache.markPageRendered(pageIndex);
+      pageRenderCacheRef.current.markPageRendered(pageIndex);
     }
 
     ctx.restore();
@@ -993,7 +1069,6 @@ export function EditorCanvas({
     visiblePageIndices,
     bufferedPageIndices,
     virtualShouldRenderPage,
-    pageRenderCache,
   ]);
 
   // Convert screen coordinates to document coordinates (accounting for zoom and scroll)
@@ -1121,6 +1196,137 @@ export function EditorCanvas({
     [inputHandleInput]
   );
 
+  // Hit-test a mouse click against GlyphRun items to find paragraph + char offset
+  const hitTestClick = useCallback(
+    (screenX: number, screenY: number): { paragraph: number; offset: number } | null => {
+      if (!renderModel) return null;
+
+      const canvas = canvasRef.current;
+      if (!canvas) return null;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return null;
+
+      const canvasWidth = containerSize.width;
+      const layouts = calculatePageLayouts(canvasWidth);
+
+      // Convert screen coords to canvas coords (accounting for scroll)
+      const canvasX = screenX + scrollOffset.x;
+      const canvasY = screenY + scrollOffset.y;
+
+      const MARGIN_PX = 96; // Must match backend MARGIN constant
+      const LINE_HEIGHT_PX = 22; // Must match backend LINE_HEIGHT constant
+
+      for (const layout of layouts) {
+        // Check if point is within this page (accounting for zoom)
+        const pageLeft = layout.x;
+        const pageTop = layout.y;
+        const pageRight = pageLeft + layout.width * zoom;
+        const pageBottom = pageTop + layout.height * zoom;
+
+        if (canvasX >= pageLeft && canvasX <= pageRight && canvasY >= pageTop && canvasY <= pageBottom) {
+          // Convert to page-relative coords (unzoomed)
+          const pageRelativeX = (canvasX - pageLeft) / zoom;
+          const pageRelativeY = (canvasY - pageTop) / zoom;
+
+          // Find the closest GlyphRun by y position
+          // GlyphRun y is the baseline: MARGIN + visual_line * LINE_HEIGHT + 16
+          // So the line top is approximately y - font_size, line bottom is y + 4
+          let bestGlyph: (typeof layout.page.items)[number] | null = null;
+          let bestYDist = Infinity;
+
+          for (const item of layout.page.items) {
+            if (item.type === 'GlyphRun' && item.para_index !== undefined) {
+              const lineTop = item.y - item.font_size;
+              const lineBottom = item.y + 6;
+              if (pageRelativeY >= lineTop && pageRelativeY <= lineBottom) {
+                const yDist = Math.abs(pageRelativeY - item.y);
+                if (yDist < bestYDist) {
+                  bestYDist = yDist;
+                  bestGlyph = item;
+                }
+              }
+            }
+          }
+
+          if (bestGlyph && bestGlyph.type === 'GlyphRun' && bestGlyph.para_index !== undefined) {
+            // Set up the font to match the GlyphRun for accurate measurement
+            const fontStyle = bestGlyph.italic ? 'italic' : 'normal';
+            const fontWeight = bestGlyph.bold ? 'bold' : 'normal';
+            ctx.font = `${fontStyle} ${fontWeight} ${bestGlyph.font_size}px ${bestGlyph.font_family || 'sans-serif'}`;
+
+            const textX = bestGlyph.x; // MARGIN
+            const relativeClickX = pageRelativeX - textX;
+
+            if (relativeClickX <= 0) {
+              // Clicked before the text start
+              return {
+                paragraph: bestGlyph.para_index,
+                offset: bestGlyph.line_start_char_offset ?? 0,
+              };
+            }
+
+            // Binary search for the character position
+            const text = bestGlyph.text;
+            let charOffset = 0;
+            for (let i = 0; i <= text.length; i++) {
+              const width = ctx.measureText(text.substring(0, i)).width;
+              if (width > relativeClickX) {
+                // Check if we're closer to this char or the previous one
+                const prevWidth = i > 0 ? ctx.measureText(text.substring(0, i - 1)).width : 0;
+                charOffset = (relativeClickX - prevWidth < width - relativeClickX) ? i - 1 : i;
+                return {
+                  paragraph: bestGlyph.para_index,
+                  offset: (bestGlyph.line_start_char_offset ?? 0) + charOffset,
+                };
+              }
+            }
+
+            // Clicked past the end of text on this line
+            return {
+              paragraph: bestGlyph.para_index,
+              offset: (bestGlyph.line_start_char_offset ?? 0) + text.length,
+            };
+          }
+
+          // If no GlyphRun matched, check if click is in an empty line area
+          // Calculate which visual line was clicked
+          const visualLine = Math.floor((pageRelativeY - MARGIN_PX) / LINE_HEIGHT_PX);
+          if (visualLine >= 0) {
+            // Find the GlyphRun closest to this visual line or check for empty paragraphs
+            // For empty paragraphs there won't be a GlyphRun, so position at start
+            let currentLine = 0;
+            for (const item of layout.page.items) {
+              if (item.type === 'GlyphRun' && item.para_index !== undefined) {
+                if (currentLine === visualLine) {
+                  return {
+                    paragraph: item.para_index,
+                    offset: item.line_start_char_offset ?? 0,
+                  };
+                }
+                currentLine++;
+              }
+            }
+
+            // Clicked below all content - position at end of last paragraph
+            const lastGlyph = [...layout.page.items]
+              .reverse()
+              .find(i => i.type === 'GlyphRun' && i.para_index !== undefined);
+            if (lastGlyph && lastGlyph.type === 'GlyphRun' && lastGlyph.para_index !== undefined) {
+              return {
+                paragraph: lastGlyph.para_index,
+                offset: (lastGlyph.line_start_char_offset ?? 0) + lastGlyph.text.length,
+              };
+            }
+          }
+        }
+      }
+
+      return null;
+    },
+    [renderModel, containerSize.width, calculatePageLayouts, scrollOffset, zoom]
+  );
+
   // Handle mouse events for selection
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -1147,13 +1353,18 @@ export function EditorCanvas({
           return;
         }
 
-        const docCoords = screenToDocumentCoords(screenX, screenY);
-        // TODO: Implement mouse selection using docCoords
-        // 1. Hit test against page layouts and content
-        // 2. Set selection anchor
+        // Hit-test to find paragraph and character offset
+        const hitResult = hitTestClick(screenX, screenY);
+        if (hitResult) {
+          onCommand({
+            type: 'SetCursorPosition',
+            paragraph: hitResult.paragraph,
+            offset: hitResult.offset,
+          });
+        }
       }
     },
-    [screenToDocumentCoords, findHyperlinkAtPosition, onHyperlinkClick]
+    [hitTestClick, findHyperlinkAtPosition, onHyperlinkClick, onCommand]
   );
 
   // Handle mouse move for cursor changes over hyperlinks
@@ -1215,6 +1426,19 @@ export function EditorCanvas({
     [schedulerHandleScroll]
   );
 
+  // Keep a stable ref to the latest render function so the resize effect
+  // doesn't need render in its dependency array (which changes every frame).
+  const renderRef = useRef(render);
+  useEffect(() => {
+    renderRef.current = render;
+  }, [render]);
+
+  // Stable ref for onContainerResize to avoid re-running the resize effect
+  const onContainerResizeRef = useRef(onContainerResize);
+  useEffect(() => {
+    onContainerResizeRef.current = onContainerResize;
+  }, [onContainerResize]);
+
   // Set up canvas sizing and high DPI support
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -1226,13 +1450,15 @@ export function EditorCanvas({
       const width = container.clientWidth;
       const height = container.clientHeight;
 
-      // Update container size state
-      setContainerSize({ width, height });
+      // Update container size state only if changed
+      setContainerSize(prev =>
+        prev.width === width && prev.height === height
+          ? prev
+          : { width, height }
+      );
 
       // Notify parent of resize
-      if (onContainerResize) {
-        onContainerResize(width, height);
-      }
+      onContainerResizeRef.current?.(width, height);
 
       // Set canvas size accounting for device pixel ratio
       canvas.width = width * dpr;
@@ -1252,7 +1478,7 @@ export function EditorCanvas({
       // Mark global dirty on resize
       markGlobalDirty();
 
-      render();
+      renderRef.current();
     };
 
     resizeCanvas();
@@ -1266,13 +1492,17 @@ export function EditorCanvas({
     return () => {
       resizeObserver.disconnect();
     };
-  }, [render, setCanvas, markGlobalDirty, onContainerResize]);
+  }, [setCanvas, markGlobalDirty]);
 
   // Update scheduler when render model changes
   useEffect(() => {
     setSchedulerRenderModel(renderModel);
     if (renderModel) {
       markGlobalDirty();
+      // Ensure caret is visible when a new render model arrives
+      // (prevents the blink timer from hiding it before first paint)
+      setCaretVisible(true);
+      lastKeyTimeRef.current = Date.now();
     }
   }, [renderModel, setSchedulerRenderModel, markGlobalDirty]);
 
@@ -1283,10 +1513,12 @@ export function EditorCanvas({
     }
   }, [dirtyPages, markPagesDirty]);
 
-  // Set up render callback for scheduler
-  useEffect(() => {
-    scheduler.setRenderCallback(renderPage);
-  }, [scheduler, renderPage]);
+  // NOTE: We intentionally do NOT set a render callback on the scheduler.
+  // The scheduler's independent RAF-based render loop clears the entire canvas
+  // and redraws pages, but does NOT render carets or composition previews.
+  // This caused the caret to be erased immediately after being drawn by the
+  // component's render() function. All rendering is handled by the component's
+  // own render() function which properly draws pages, carets, and overlays.
 
   // Re-render when zoom changes
   useEffect(() => {
@@ -1333,6 +1565,15 @@ export function EditorCanvas({
       );
     }
   }, [schedulerHandleScroll]);
+
+  // Auto-focus canvas on mount so the user can type immediately and see the caret
+  useEffect(() => {
+    // Small delay to ensure canvas is fully rendered before focusing
+    const timer = setTimeout(() => {
+      canvasRef.current?.focus();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Calculate scrollable content size
   const totalHeight = getTotalHeight();

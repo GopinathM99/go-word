@@ -1,5 +1,5 @@
 [package]
-name = "ms-word"
+name = "go-word"
 version.workspace = true
 edition.workspace = true
 description = "Word processor desktop application"
@@ -10,6 +10,7 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2", features = [] }
 tauri-plugin-shell = "2"
+tauri-plugin-dialog = "2"
 serde.workspace = true
 serde_json.workspace = true
 doc_model.workspace = true

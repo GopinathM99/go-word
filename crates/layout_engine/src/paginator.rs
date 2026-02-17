@@ -1,6 +1,6 @@
 //! Pagination Algorithm (D2)
 //!
-//! This module implements the pagination algorithm for the MS Word document editor.
+//! This module implements the pagination algorithm for the Go Word document editor.
 //! It takes line-broken paragraphs from the line breaker (D1) and flows them onto pages.
 //!
 //! Key features:

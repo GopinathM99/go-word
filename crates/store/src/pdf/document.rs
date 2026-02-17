@@ -63,8 +63,8 @@ impl DocumentInfo {
     /// Create a new document info with default values
     pub fn new() -> Self {
         Self {
-            creator: Some("MS Word Clone".to_string()),
-            producer: Some("MS Word Clone PDF Export".to_string()),
+            creator: Some("Go Word".to_string()),
+            producer: Some("Go Word PDF Export".to_string()),
             ..Default::default()
         }
     }

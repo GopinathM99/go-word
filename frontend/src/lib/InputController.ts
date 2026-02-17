@@ -23,6 +23,7 @@ import {
   SetParagraphAlignmentCommand,
   OpenParagraphDialogCommand,
   OpenSymbolDialogCommand,
+  SetCursorPositionCommand,
   EditorCommand,
 } from './types';
 
@@ -41,6 +42,7 @@ export type {
   SetParagraphAlignmentCommand,
   OpenParagraphDialogCommand,
   OpenSymbolDialogCommand,
+  SetCursorPositionCommand,
   CompositionState,
 };
 
@@ -59,7 +61,8 @@ export type Command =
   | OpenBookmarkDialogCommand
   | SetParagraphAlignmentCommand
   | OpenParagraphDialogCommand
-  | OpenSymbolDialogCommand;
+  | OpenSymbolDialogCommand
+  | SetCursorPositionCommand;
 
 // =============================================================================
 // Input Controller Configuration

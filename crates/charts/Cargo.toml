@@ -2,7 +2,7 @@
 name = "charts"
 version.workspace = true
 edition.workspace = true
-description = "Chart support for MS Word clone - import, rendering, and export"
+description = "Chart support for Go Word - import, rendering, and export"
 
 [dependencies]
 serde.workspace = true

@@ -1,4 +1,4 @@
-//! Math Crate - Equation/Math support for the MS Word clone
+//! Math Crate - Equation/Math support for Go Word
 //!
 //! This crate provides comprehensive support for mathematical equations including:
 //! - A math AST (Abstract Syntax Tree) for representing equations

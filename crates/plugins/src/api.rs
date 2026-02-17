@@ -1,4 +1,4 @@
-//! Plugin API layer for the MS Word clone
+//! Plugin API layer for Go Word
 //!
 //! This module provides the API traits and implementations that plugins use
 //! to interact with the host application. All API calls are subject to

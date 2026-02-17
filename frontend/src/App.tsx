@@ -17,15 +17,17 @@ import { useAccessibilityBridge } from './lib/AccessibilityBridge';
 import { Command } from './lib/InputController';
 import { HyperlinkData, HyperlinkRenderInfo } from './lib/types';
 import { open } from '@tauri-apps/plugin-shell';
+import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
+import { invoke } from '@tauri-apps/api/core';
 
 // Storage key for view mode preference
-const VIEW_MODE_STORAGE_KEY = 'ms-word-view-mode';
+const VIEW_MODE_STORAGE_KEY = 'go-word-view-mode';
 
 // Storage key for high contrast preference
-const HIGH_CONTRAST_STORAGE_KEY = 'ms-word-high-contrast';
+const HIGH_CONTRAST_STORAGE_KEY = 'go-word-high-contrast';
 
 function AppContent() {
-  const { document, selection, renderModel, executeCommand } = useDocument();
+  const { document, selection, renderModel, executeCommand, newDocument, loadDocument, updateDocumentPath } = useDocument();
 
   // Live region for announcements
   const liveRegion = useLiveRegion();
@@ -92,6 +94,19 @@ function AppContent() {
 
   // Symbol dialog state
   const [symbolDialogOpen, setSymbolDialogOpen] = useState(false);
+
+  // Formatting state for toolbar toggle buttons
+  const [formattingState, setFormattingState] = useState<{
+    bold?: boolean;
+    italic?: boolean;
+    underline?: boolean;
+    alignment?: 'left' | 'center' | 'right' | 'justify';
+  }>({
+    bold: false,
+    italic: false,
+    underline: false,
+    alignment: 'left',
+  });
 
   // Refs for focus management
   const toolbarRef = useRef<HTMLElement>(null);
@@ -274,6 +289,13 @@ function AppContent() {
           liveRegion.announceDocumentStatus('Redo');
           break;
 
+        case 'SetCursorPosition':
+          executeCommand('SetCursorPosition', {
+            paragraph: command.paragraph,
+            offset: command.offset,
+          });
+          break;
+
         case 'SelectAll':
           executeCommand('SelectAll');
           liveRegion.announceDocumentStatus('All content selected');
@@ -418,8 +440,62 @@ function AppContent() {
 
   // Extended toolbar command handler
   const handleToolbarCommand = useCallback(
-    (command: string, params?: Record<string, unknown>) => {
+    async (command: string, params?: Record<string, unknown>) => {
       switch (command) {
+        case 'new': {
+          console.log('[Toolbar] New document requested');
+          await newDocument();
+          setFormattingState({ bold: false, italic: false, underline: false, alignment: 'left' });
+          liveRegion.announceDocumentStatus('New document created');
+          window.document.title = 'Untitled - Go Word';
+          console.log('[Toolbar] New document created successfully');
+          break;
+        }
+        case 'open': {
+          const filePath = await openDialog({
+            multiple: false,
+            filters: [
+              { name: 'Text Files', extensions: ['txt'] },
+              { name: 'Word Documents', extensions: ['docx', 'doc'] },
+              { name: 'All Files', extensions: ['*'] },
+            ],
+          });
+          if (filePath) {
+            await loadDocument(filePath as string);
+            setFormattingState({ bold: false, italic: false, underline: false, alignment: 'left' });
+            liveRegion.announceDocumentStatus('Document opened');
+          }
+          break;
+        }
+        case 'save': {
+          if (document?.path) {
+            await invoke('save_document', { docId: document.id, path: document.path });
+            updateDocumentPath(document.path);
+            liveRegion.announceDocumentStatus('Document saved');
+          } else {
+            // No path yet — show Save As dialog
+            const savePath = await saveDialog({
+              filters: [
+                { name: 'Text Files', extensions: ['txt'] },
+                { name: 'All Files', extensions: ['*'] },
+              ],
+            });
+            if (savePath) {
+              await invoke('save_document', { docId: document?.id, path: savePath });
+              updateDocumentPath(savePath as string);
+              liveRegion.announceDocumentStatus('Document saved');
+            }
+          }
+          break;
+        }
+        case 'undo':
+          executeCommand('undo');
+          liveRegion.announceDocumentStatus('Undo');
+          break;
+        case 'redo':
+          executeCommand('redo');
+          liveRegion.announceDocumentStatus('Redo');
+          break;
         case 'zoomIn':
           zoomIn();
           liveRegion.announceDocumentStatus(`Zoom ${Math.round(zoom * 100 * 1.25)}%`);
@@ -482,22 +558,28 @@ function AppContent() {
           break;
         case 'bold':
           executeCommand('bold', params);
-          liveRegion.announceFormatting('Bold', true);
+          setFormattingState(prev => ({ ...prev, bold: !prev.bold }));
+          liveRegion.announceFormatting('Bold', !formattingState.bold);
           break;
         case 'italic':
           executeCommand('italic', params);
-          liveRegion.announceFormatting('Italic', true);
+          setFormattingState(prev => ({ ...prev, italic: !prev.italic }));
+          liveRegion.announceFormatting('Italic', !formattingState.italic);
           break;
         case 'underline':
           executeCommand('underline', params);
-          liveRegion.announceFormatting('Underline', true);
+          setFormattingState(prev => ({ ...prev, underline: !prev.underline }));
+          liveRegion.announceFormatting('Underline', !formattingState.underline);
           break;
-        case 'setParagraphAlignment':
+        case 'setParagraphAlignment': {
           executeCommand('SetParagraphAlignment', params);
-          if (params?.alignment) {
-            liveRegion.announceFormatting(`Align ${params.alignment}`, true);
+          const alignment = params?.alignment as 'left' | 'center' | 'right' | 'justify' | undefined;
+          if (alignment) {
+            setFormattingState(prev => ({ ...prev, alignment }));
+            liveRegion.announceFormatting(`Align ${alignment}`, true);
           }
           break;
+        }
         case 'setParagraphIndent':
           if (params?.type === 'increase') {
             executeCommand('SetParagraphIndent', { left: 36 });
@@ -544,10 +626,6 @@ function AppContent() {
             liveRegion.announceDocumentStatus('Paragraph formatting applied');
           }
           break;
-        case 'save':
-          executeCommand(command, params);
-          liveRegion.announceDocumentStatus('Document saved');
-          break;
         case 'setPageSetup':
           executeCommand('SetPageSetup', params);
           liveRegion.announceDocumentStatus('Page setup applied');
@@ -576,7 +654,7 @@ function AppContent() {
           executeCommand(command, params);
       }
     },
-    [executeCommand, zoomIn, zoomOut, resetZoom, fitToWidth, fitToPage, handleViewModeChange, liveRegion, focusManager, zoom]
+    [executeCommand, newDocument, loadDocument, updateDocumentPath, document, formattingState, zoomIn, zoomOut, resetZoom, fitToWidth, fitToPage, handleViewModeChange, liveRegion, focusManager, zoom]
   );
 
   // Close hyperlink dialog
@@ -667,9 +745,9 @@ function AppContent() {
         ]}
       />
 
-      <Toolbar onCommand={handleToolbarCommand} />
+      <Toolbar onCommand={handleToolbarCommand} formattingState={formattingState} />
 
-      <main id="main-content" ref={editorRef as React.RefObject<HTMLDivElement>}>
+      <main id="main-content" ref={editorRef as React.RefObject<HTMLDivElement>} style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
         <EditorCanvas
           renderModel={renderModel}
           selection={selection}

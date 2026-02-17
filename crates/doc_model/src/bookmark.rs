@@ -27,7 +27,7 @@ pub enum BookmarkValidationError {
     MustStartWithLetter,
     /// Name already exists
     DuplicateName,
-    /// Name is too long (max 40 characters, like MS Word)
+    /// Name is too long (max 40 characters)
     NameTooLong,
 }
 
@@ -53,7 +53,7 @@ impl std::fmt::Display for BookmarkValidationError {
 
 impl std::error::Error for BookmarkValidationError {}
 
-/// Maximum bookmark name length (matching MS Word)
+/// Maximum bookmark name length
 pub const MAX_BOOKMARK_NAME_LENGTH: usize = 40;
 
 /// Validate a bookmark name

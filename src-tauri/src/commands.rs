@@ -7,62 +7,555 @@ use doc_model::{
 };
 use edit_engine::Command;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::sync::Mutex;
 use store::{AppSettings, EditingSettings, GeneralSettings, PrivacySettings, Theme};
 use tauri::{Manager, State};
 use text_engine::{FontStyle, FontWeight, SubstitutionReason};
+use uuid::Uuid;
+
+// =============================================================================
+// Document State
+// =============================================================================
+
+#[derive(Debug, Clone)]
+struct DocumentSnapshot {
+    paragraphs: Vec<String>,
+    cursor_para: usize,
+    cursor_offset: usize,
+    bold: bool,
+    italic: bool,
+    underline: bool,
+}
+
+pub struct SimpleDocument {
+    paragraphs: Vec<String>,
+    cursor_para: usize,
+    cursor_offset: usize,
+    bold: bool,
+    italic: bool,
+    underline: bool,
+    undo_stack: Vec<DocumentSnapshot>,
+    redo_stack: Vec<DocumentSnapshot>,
+}
+
+impl SimpleDocument {
+    fn new() -> Self {
+        Self {
+            paragraphs: vec!["".to_string()],
+            cursor_para: 0,
+            cursor_offset: 0,
+            bold: false,
+            italic: false,
+            underline: false,
+            undo_stack: Vec::new(),
+            redo_stack: Vec::new(),
+        }
+    }
+
+    fn snapshot(&self) -> DocumentSnapshot {
+        DocumentSnapshot {
+            paragraphs: self.paragraphs.clone(),
+            cursor_para: self.cursor_para,
+            cursor_offset: self.cursor_offset,
+            bold: self.bold,
+            italic: self.italic,
+            underline: self.underline,
+        }
+    }
+
+    fn push_undo(&mut self) {
+        self.undo_stack.push(self.snapshot());
+        self.redo_stack.clear();
+    }
+
+    fn restore_snapshot(&mut self, snap: DocumentSnapshot) {
+        self.paragraphs = snap.paragraphs;
+        self.cursor_para = snap.cursor_para;
+        self.cursor_offset = snap.cursor_offset;
+        self.bold = snap.bold;
+        self.italic = snap.italic;
+        self.underline = snap.underline;
+    }
+}
+
+#[derive(Default)]
+pub struct DocumentStore {
+    pub documents: Mutex<HashMap<String, SimpleDocument>>,
+}
+
+// =============================================================================
+// Layout Constants
+// =============================================================================
+
+const PAGE_WIDTH: f64 = 816.0;
+const PAGE_HEIGHT: f64 = 1056.0;
+const MARGIN: f64 = 96.0;
+const FONT_SIZE: f64 = 14.0;
+const LINE_HEIGHT: f64 = 22.0;
+const CHAR_WIDTH: f64 = 8.4; // 14.0 * 0.6
+const TEXT_WIDTH: f64 = PAGE_WIDTH - 2.0 * MARGIN; // 624px
+const CHARS_PER_LINE: usize = 74; // TEXT_WIDTH / CHAR_WIDTH ≈ 74
+
+// =============================================================================
+// Document Commands
+// =============================================================================
 
 /// Create a new empty document
 #[tauri::command]
-pub fn create_document() -> Result<String, String> {
-    // TODO: Implement with doc_model
-    Ok("doc_id".to_string())
+pub fn create_document(store: State<'_, DocumentStore>) -> Result<String, String> {
+    let doc_id = Uuid::new_v4().to_string();
+    let doc = SimpleDocument::new();
+    let mut docs = store.documents.lock().map_err(|e| e.to_string())?;
+    docs.insert(doc_id.clone(), doc);
+    Ok(doc_id)
 }
 
 /// Apply an editing command to the document
 #[tauri::command]
-pub fn apply_command(doc_id: String, command: String) -> Result<DocumentChange, String> {
-    // TODO: Implement with edit_engine
-    Ok(DocumentChange::default())
+pub fn apply_command(
+    doc_id: String,
+    command: String,
+    store: State<'_, DocumentStore>,
+) -> Result<DocumentChange, String> {
+    let parsed: serde_json::Value =
+        serde_json::from_str(&command).map_err(|e| format!("Invalid command JSON: {}", e))?;
+    let cmd_type = parsed
+        .get("type")
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+
+    let mut docs = store.documents.lock().map_err(|e| e.to_string())?;
+    let doc = docs
+        .get_mut(&doc_id)
+        .ok_or_else(|| format!("Document not found: {}", doc_id))?;
+
+    match cmd_type {
+        "InsertText" => {
+            let text = parsed
+                .get("text")
+                .and_then(|v| v.as_str())
+                .unwrap_or("");
+            if !text.is_empty() {
+                doc.push_undo();
+                let para = &mut doc.paragraphs[doc.cursor_para];
+                // Insert at byte offset (safe for ASCII; for Unicode we use char indices)
+                let byte_offset = char_to_byte_offset(para, doc.cursor_offset);
+                para.insert_str(byte_offset, text);
+                doc.cursor_offset += text.chars().count();
+            }
+        }
+        "DeleteRange" => {
+            let direction = parsed
+                .get("direction")
+                .and_then(|v| v.as_str())
+                .unwrap_or("backward");
+            if direction == "backward" {
+                if doc.cursor_offset > 0 {
+                    doc.push_undo();
+                    let para = &mut doc.paragraphs[doc.cursor_para];
+                    let byte_start = char_to_byte_offset(para, doc.cursor_offset - 1);
+                    let byte_end = char_to_byte_offset(para, doc.cursor_offset);
+                    para.replace_range(byte_start..byte_end, "");
+                    doc.cursor_offset -= 1;
+                } else if doc.cursor_para > 0 {
+                    // Merge with previous paragraph
+                    doc.push_undo();
+                    let current_text = doc.paragraphs.remove(doc.cursor_para);
+                    doc.cursor_para -= 1;
+                    doc.cursor_offset = doc.paragraphs[doc.cursor_para].chars().count();
+                    doc.paragraphs[doc.cursor_para].push_str(&current_text);
+                }
+            } else {
+                // forward delete
+                let para_len = doc.paragraphs[doc.cursor_para].chars().count();
+                if doc.cursor_offset < para_len {
+                    doc.push_undo();
+                    let para = &mut doc.paragraphs[doc.cursor_para];
+                    let byte_start = char_to_byte_offset(para, doc.cursor_offset);
+                    let byte_end = char_to_byte_offset(para, doc.cursor_offset + 1);
+                    para.replace_range(byte_start..byte_end, "");
+                } else if doc.cursor_para < doc.paragraphs.len() - 1 {
+                    // Merge next paragraph into current
+                    doc.push_undo();
+                    let next_text = doc.paragraphs.remove(doc.cursor_para + 1);
+                    doc.paragraphs[doc.cursor_para].push_str(&next_text);
+                }
+            }
+        }
+        "SplitParagraph" => {
+            doc.push_undo();
+            let para = &doc.paragraphs[doc.cursor_para];
+            let byte_offset = char_to_byte_offset(para, doc.cursor_offset);
+            let rest = para[byte_offset..].to_string();
+            doc.paragraphs[doc.cursor_para].truncate(byte_offset);
+            doc.cursor_para += 1;
+            doc.paragraphs.insert(doc.cursor_para, rest);
+            doc.cursor_offset = 0;
+        }
+        "Navigate" => {
+            let direction = parsed
+                .get("direction")
+                .and_then(|v| v.as_str())
+                .unwrap_or("right");
+            match direction {
+                "left" => {
+                    if doc.cursor_offset > 0 {
+                        doc.cursor_offset -= 1;
+                    } else if doc.cursor_para > 0 {
+                        doc.cursor_para -= 1;
+                        doc.cursor_offset = doc.paragraphs[doc.cursor_para].chars().count();
+                    }
+                }
+                "right" => {
+                    let para_len = doc.paragraphs[doc.cursor_para].chars().count();
+                    if doc.cursor_offset < para_len {
+                        doc.cursor_offset += 1;
+                    } else if doc.cursor_para < doc.paragraphs.len() - 1 {
+                        doc.cursor_para += 1;
+                        doc.cursor_offset = 0;
+                    }
+                }
+                "home" => {
+                    doc.cursor_offset = 0;
+                }
+                "end" => {
+                    doc.cursor_offset = doc.paragraphs[doc.cursor_para].chars().count();
+                }
+                "up" => {
+                    // Move to previous visual line
+                    let (line_idx, col_in_line) =
+                        cursor_to_visual_line(doc.cursor_para, doc.cursor_offset, &doc.paragraphs);
+                    if line_idx > 0 {
+                        let (para, offset) =
+                            visual_line_to_cursor(line_idx - 1, col_in_line, &doc.paragraphs);
+                        doc.cursor_para = para;
+                        doc.cursor_offset = offset;
+                    } else {
+                        doc.cursor_para = 0;
+                        doc.cursor_offset = 0;
+                    }
+                }
+                "down" => {
+                    let (line_idx, col_in_line) =
+                        cursor_to_visual_line(doc.cursor_para, doc.cursor_offset, &doc.paragraphs);
+                    let total_lines = total_visual_lines(&doc.paragraphs);
+                    if line_idx < total_lines.saturating_sub(1) {
+                        let (para, offset) =
+                            visual_line_to_cursor(line_idx + 1, col_in_line, &doc.paragraphs);
+                        doc.cursor_para = para;
+                        doc.cursor_offset = offset;
+                    } else {
+                        let last = doc.paragraphs.len() - 1;
+                        doc.cursor_para = last;
+                        doc.cursor_offset = doc.paragraphs[last].chars().count();
+                    }
+                }
+                _ => {}
+            }
+        }
+        "SelectAll" => {
+            // Move cursor to end of last paragraph (select all = just move for now)
+            let last = doc.paragraphs.len() - 1;
+            doc.cursor_para = last;
+            doc.cursor_offset = doc.paragraphs[last].chars().count();
+        }
+        "SetCursorPosition" => {
+            let paragraph = parsed
+                .get("paragraph")
+                .and_then(|v| v.as_u64())
+                .unwrap_or(0) as usize;
+            let offset = parsed
+                .get("offset")
+                .and_then(|v| v.as_u64())
+                .unwrap_or(0) as usize;
+            if paragraph < doc.paragraphs.len() {
+                doc.cursor_para = paragraph;
+                let max_offset = doc.paragraphs[paragraph].chars().count();
+                doc.cursor_offset = offset.min(max_offset);
+            }
+        }
+        "bold" => {
+            doc.bold = !doc.bold;
+        }
+        "italic" => {
+            doc.italic = !doc.italic;
+        }
+        "underline" => {
+            doc.underline = !doc.underline;
+        }
+        _ => {
+            // Unknown command — ignore silently for forward compatibility
+        }
+    }
+
+    Ok(make_doc_change(doc))
+}
+
+/// Convert char offset to byte offset in a string
+fn char_to_byte_offset(s: &str, char_offset: usize) -> usize {
+    s.char_indices()
+        .nth(char_offset)
+        .map(|(i, _)| i)
+        .unwrap_or(s.len())
+}
+
+/// Get total visual lines across all paragraphs
+fn total_visual_lines(paragraphs: &[String]) -> usize {
+    paragraphs
+        .iter()
+        .map(|p| visual_lines_for_paragraph(p))
+        .sum()
+}
+
+/// Get number of visual lines for a paragraph
+fn visual_lines_for_paragraph(text: &str) -> usize {
+    if text.is_empty() {
+        return 1;
+    }
+    let char_count = text.chars().count();
+    (char_count + CHARS_PER_LINE - 1) / CHARS_PER_LINE
+}
+
+/// Convert (paragraph, char_offset) to (global_visual_line, column_in_line)
+fn cursor_to_visual_line(
+    cursor_para: usize,
+    cursor_offset: usize,
+    paragraphs: &[String],
+) -> (usize, usize) {
+    let mut global_line = 0;
+    for (i, para) in paragraphs.iter().enumerate() {
+        let lines = visual_lines_for_paragraph(para);
+        if i == cursor_para {
+            let line_in_para = cursor_offset / CHARS_PER_LINE;
+            let col = cursor_offset % CHARS_PER_LINE;
+            return (global_line + line_in_para, col);
+        }
+        global_line += lines;
+    }
+    (global_line, 0)
+}
+
+/// Convert (global_visual_line, desired_column) to (paragraph, char_offset)
+fn visual_line_to_cursor(
+    target_line: usize,
+    desired_col: usize,
+    paragraphs: &[String],
+) -> (usize, usize) {
+    let mut global_line = 0;
+    for (i, para) in paragraphs.iter().enumerate() {
+        let lines = visual_lines_for_paragraph(para);
+        if target_line < global_line + lines {
+            let line_in_para = target_line - global_line;
+            let line_start = line_in_para * CHARS_PER_LINE;
+            let para_chars = para.chars().count();
+            let line_end = (line_start + CHARS_PER_LINE).min(para_chars);
+            let line_len = line_end - line_start;
+            let offset = line_start + desired_col.min(line_len);
+            return (i, offset);
+        }
+        global_line += lines;
+    }
+    let last = paragraphs.len().saturating_sub(1);
+    (last, paragraphs.get(last).map(|p| p.chars().count()).unwrap_or(0))
+}
+
+/// Build a DocumentChange with the current cursor position
+fn make_doc_change(doc: &SimpleDocument) -> DocumentChange {
+    let node_id = format!("p{}", doc.cursor_para);
+    DocumentChange {
+        changed_nodes: vec![node_id.clone()],
+        dirty_pages: vec![0],
+        selection: Some(Selection {
+            anchor: Position {
+                node_id: node_id.clone(),
+                offset: doc.cursor_offset,
+            },
+            focus: Position {
+                node_id,
+                offset: doc.cursor_offset,
+            },
+        }),
+    }
 }
 
 /// Get the layout/render model for the current viewport
 #[tauri::command]
-pub fn get_layout(doc_id: String, viewport: Viewport) -> Result<RenderModel, String> {
-    // TODO: Implement with layout_engine and render_model
-    Ok(RenderModel::default())
+pub fn get_layout(
+    doc_id: String,
+    viewport: Viewport,
+    store: State<'_, DocumentStore>,
+) -> Result<RenderModel, String> {
+    let docs = store.documents.lock().map_err(|e| e.to_string())?;
+    let doc = docs
+        .get(&doc_id)
+        .ok_or_else(|| format!("Document not found: {}", doc_id))?;
+
+    let mut items: Vec<serde_json::Value> = Vec::new();
+    let mut visual_line: usize = 0;
+
+    // Calculate the visual line where the cursor sits
+    let (cursor_visual_line, cursor_col_in_line) =
+        cursor_to_visual_line(doc.cursor_para, doc.cursor_offset, &doc.paragraphs);
+
+    for (para_idx, para_text) in doc.paragraphs.iter().enumerate() {
+        if para_text.is_empty() {
+            // Empty paragraph — emit a GlyphRun with empty text so the frontend
+            // can hit-test clicks on blank lines and position the cursor there.
+            let baseline_y = MARGIN + (visual_line as f64) * LINE_HEIGHT + 16.0;
+            items.push(serde_json::json!({
+                "type": "GlyphRun",
+                "text": "",
+                "font_family": "sans-serif",
+                "font_size": FONT_SIZE,
+                "bold": doc.bold,
+                "italic": doc.italic,
+                "underline": doc.underline,
+                "color": { "r": 0, "g": 0, "b": 0, "a": 255 },
+                "x": MARGIN,
+                "y": baseline_y,
+                "hyperlink": null,
+                "para_index": para_idx,
+                "line_start_char_offset": 0
+            }));
+            visual_line += 1;
+            continue;
+        }
+
+        let chars: Vec<char> = para_text.chars().collect();
+        let mut char_pos = 0;
+        while char_pos < chars.len() {
+            let end = (char_pos + CHARS_PER_LINE).min(chars.len());
+            let line_text: String = chars[char_pos..end].iter().collect();
+            let baseline_y = MARGIN + (visual_line as f64) * LINE_HEIGHT + 16.0;
+
+            items.push(serde_json::json!({
+                "type": "GlyphRun",
+                "text": line_text,
+                "font_family": "sans-serif",
+                "font_size": FONT_SIZE,
+                "bold": doc.bold,
+                "italic": doc.italic,
+                "underline": doc.underline,
+                "color": { "r": 0, "g": 0, "b": 0, "a": 255 },
+                "x": MARGIN,
+                "y": baseline_y,
+                "hyperlink": null,
+                "para_index": para_idx,
+                "line_start_char_offset": char_pos
+            }));
+
+            visual_line += 1;
+            char_pos = end;
+        }
+    }
+
+    // Emit Caret at cursor position
+    // Include line_text and char_offset_in_line so the frontend can use
+    // ctx.measureText() for accurate proportional-font caret placement.
+    let caret_x = MARGIN + (cursor_col_in_line as f64) * CHAR_WIDTH;
+    let caret_y = MARGIN + (cursor_visual_line as f64) * LINE_HEIGHT;
+
+    // Get the text of the visual line the cursor is on
+    let cursor_line_text = {
+        let para = &doc.paragraphs[doc.cursor_para];
+        let chars: Vec<char> = para.chars().collect();
+        let line_start = (doc.cursor_offset / CHARS_PER_LINE) * CHARS_PER_LINE;
+        let line_end = (line_start + CHARS_PER_LINE).min(chars.len());
+        chars[line_start..line_end].iter().collect::<String>()
+    };
+
+    items.push(serde_json::json!({
+        "type": "Caret",
+        "x": caret_x,
+        "y": caret_y,
+        "height": 20.0,
+        "color": { "r": 0, "g": 0, "b": 0, "a": 255 },
+        "line_text": cursor_line_text,
+        "char_offset_in_line": cursor_col_in_line,
+        "para_index": doc.cursor_para
+    }));
+
+    Ok(RenderModel {
+        pages: vec![PageRender {
+            page_index: 0,
+            width: PAGE_WIDTH,
+            height: PAGE_HEIGHT,
+            items,
+        }],
+    })
 }
 
 /// Save document to file
 #[tauri::command]
-pub fn save_document(doc_id: String, path: String) -> Result<(), String> {
-    // TODO: Implement with store
+pub fn save_document(doc_id: String, path: String, store: State<'_, DocumentStore>) -> Result<(), String> {
+    let docs = store.documents.lock().map_err(|e| e.to_string())?;
+    let doc = docs.get(&doc_id).ok_or_else(|| format!("Document not found: {}", doc_id))?;
+    let content = doc.paragraphs.join("\n");
+    std::fs::write(&path, &content).map_err(|e| format!("Failed to save: {}", e))?;
     Ok(())
 }
 
 /// Load document from file
 #[tauri::command]
-pub fn load_document(path: String) -> Result<String, String> {
-    // TODO: Implement with store
-    Ok("doc_id".to_string())
+pub fn load_document(path: String, store: State<'_, DocumentStore>) -> Result<String, String> {
+    let content = std::fs::read_to_string(&path).map_err(|e| format!("Failed to read: {}", e))?;
+    let doc_id = Uuid::new_v4().to_string();
+    let paragraphs: Vec<String> = content.lines().map(|l| l.to_string()).collect();
+    let paragraphs = if paragraphs.is_empty() { vec!["".to_string()] } else { paragraphs };
+    let doc = SimpleDocument {
+        paragraphs,
+        cursor_para: 0,
+        cursor_offset: 0,
+        bold: false,
+        italic: false,
+        underline: false,
+        undo_stack: Vec::new(),
+        redo_stack: Vec::new(),
+    };
+    let mut docs = store.documents.lock().map_err(|e| e.to_string())?;
+    docs.insert(doc_id.clone(), doc);
+    Ok(doc_id)
 }
 
 /// Undo the last operation
 #[tauri::command]
-pub fn undo(doc_id: String) -> Result<DocumentChange, String> {
-    // TODO: Implement with edit_engine
-    Ok(DocumentChange::default())
+pub fn undo(doc_id: String, store: State<'_, DocumentStore>) -> Result<DocumentChange, String> {
+    let mut docs = store.documents.lock().map_err(|e| e.to_string())?;
+    let doc = docs
+        .get_mut(&doc_id)
+        .ok_or_else(|| format!("Document not found: {}", doc_id))?;
+
+    if let Some(snap) = doc.undo_stack.pop() {
+        let current = doc.snapshot();
+        doc.redo_stack.push(current);
+        doc.restore_snapshot(snap);
+    }
+
+    Ok(make_doc_change(doc))
 }
 
 /// Redo the last undone operation
 #[tauri::command]
-pub fn redo(doc_id: String) -> Result<DocumentChange, String> {
-    // TODO: Implement with edit_engine
-    Ok(DocumentChange::default())
+pub fn redo(doc_id: String, store: State<'_, DocumentStore>) -> Result<DocumentChange, String> {
+    let mut docs = store.documents.lock().map_err(|e| e.to_string())?;
+    let doc = docs
+        .get_mut(&doc_id)
+        .ok_or_else(|| format!("Document not found: {}", doc_id))?;
+
+    if let Some(snap) = doc.redo_stack.pop() {
+        let current = doc.snapshot();
+        doc.undo_stack.push(current);
+        doc.restore_snapshot(snap);
+    }
+
+    Ok(make_doc_change(doc))
 }
 
 // IPC Types
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct DocumentChange {
     pub changed_nodes: Vec<String>,
     pub dirty_pages: Vec<u32>,
@@ -70,12 +563,14 @@ pub struct DocumentChange {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Selection {
     pub anchor: Position,
     pub focus: Position,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Position {
     pub node_id: String,
     pub offset: usize,
@@ -99,22 +594,7 @@ pub struct PageRender {
     pub page_index: u32,
     pub width: f64,
     pub height: f64,
-    pub items: Vec<RenderItem>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RenderItem {
-    pub item_type: String,
-    pub bounds: Rect,
-    pub data: serde_json::Value,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Rect {
-    pub x: f64,
-    pub y: f64,
-    pub width: f64,
-    pub height: f64,
+    pub items: Vec<serde_json::Value>,
 }
 
 // =============================================================================

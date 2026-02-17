@@ -23,6 +23,9 @@ src-tauri/target/
 # Autosave
 .autosave/
 
+# Docs
+docs/
+
 # Environment
 .env
 .env.local

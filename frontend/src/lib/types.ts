@@ -49,6 +49,8 @@ export interface GlyphRunData {
   x: number;
   y: number;
   hyperlink: HyperlinkRenderInfo | null;
+  para_index?: number;
+  line_start_char_offset?: number;
 }
 
 // Hyperlink information for rendering
@@ -76,6 +78,9 @@ export interface CaretData {
   y: number;
   height: number;
   color: Color;
+  line_text?: string;
+  char_offset_in_line?: number;
+  para_index?: number;
 }
 
 // Selection render item
@@ -289,6 +294,15 @@ export interface HistoryCommand {
  */
 export interface SelectAllCommand {
   type: 'SelectAll';
+}
+
+/**
+ * Set cursor position directly (e.g., from mouse click)
+ */
+export interface SetCursorPositionCommand {
+  type: 'SetCursorPosition';
+  paragraph: number;
+  offset: number;
 }
 
 /**
@@ -629,7 +643,8 @@ export type EditorCommand =
   | SetImageWrapCommand
   | UpdateImagePropertiesCommand
   | OpenImageDialogCommand
-  | ShapeCommand;
+  | ShapeCommand
+  | SetCursorPositionCommand;
 
 // =============================================================================
 // IME Composition State

@@ -341,7 +341,7 @@ impl XmpMetadata {
             description: None,
             create_date: None,
             modify_date: None,
-            creator_tool: Some("MS Word Clone".to_string()),
+            creator_tool: Some("Go Word".to_string()),
             pdfa_part: None,
             pdfa_conformance: None,
             document_id: None,
@@ -443,7 +443,7 @@ impl XmpMetadata {
         // PDF namespace
         xmp.push_str(r#"<rdf:Description rdf:about="" xmlns:pdf="http://ns.adobe.com/pdf/1.3/">"#);
         xmp.push('\n');
-        xmp.push_str(r#"<pdf:Producer>MS Word Clone PDF/A Export</pdf:Producer>"#);
+        xmp.push_str(r#"<pdf:Producer>Go Word PDF/A Export</pdf:Producer>"#);
         xmp.push('\n');
         xmp.push_str(r#"</rdf:Description>"#);
         xmp.push('\n');

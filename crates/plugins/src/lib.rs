@@ -1,4 +1,4 @@
-//! Plugin system for MS Word clone
+//! Plugin system for Go Word
 //!
 //! This crate provides a complete plugin architecture including:
 //!

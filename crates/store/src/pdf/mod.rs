@@ -1,6 +1,6 @@
 //! PDF Export Module
 //!
-//! This module provides PDF generation functionality for the MS Word clone.
+//! This module provides PDF generation functionality for Go Word.
 //! It converts the render model (RenderPage, RenderItem) into valid PDF files.
 //!
 //! # Architecture

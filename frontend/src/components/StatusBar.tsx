@@ -1,5 +1,5 @@
 /**
- * StatusBar - MS Word-style status bar component
+ * StatusBar - Go Word status bar component
  *
  * Features:
  * - Fixed position at bottom of editor window

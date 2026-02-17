@@ -50,13 +50,13 @@ describe('useZoom', () => {
     });
 
     it('should load zoom from localStorage if document ID is provided', () => {
-      localStorageMock.setItem('ms-word-zoom-test-doc', '1.25');
+      localStorageMock.setItem('go-word-zoom-test-doc', '1.25');
       const { result } = renderHook(() => useZoom({ documentId: 'test-doc' }));
       expect(result.current.zoom).toBe(1.25);
     });
 
     it('should use initial zoom if localStorage value is invalid', () => {
-      localStorageMock.setItem('ms-word-zoom-test-doc', 'invalid');
+      localStorageMock.setItem('go-word-zoom-test-doc', 'invalid');
       const { result } = renderHook(() => useZoom({ documentId: 'test-doc', initialZoom: 1.0 }));
       expect(result.current.zoom).toBe(1.0);
     });
@@ -257,7 +257,7 @@ describe('useZoom', () => {
         result.current.setZoom(1.5);
       });
 
-      expect(localStorageMock.getItem('ms-word-zoom-test-doc')).toBe('1.5');
+      expect(localStorageMock.getItem('go-word-zoom-test-doc')).toBe('1.5');
     });
 
     it('should not save zoom without document ID', () => {
@@ -268,7 +268,7 @@ describe('useZoom', () => {
       });
 
       // Should not throw and should not save to any key
-      expect(localStorageMock.getItem('ms-word-zoom-undefined')).toBeNull();
+      expect(localStorageMock.getItem('go-word-zoom-undefined')).toBeNull();
     });
   });
 

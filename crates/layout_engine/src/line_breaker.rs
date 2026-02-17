@@ -1,6 +1,6 @@
 //! Line Breaking Algorithm (D1)
 //!
-//! This module implements the line breaking algorithm for the MS Word document editor.
+//! This module implements the line breaking algorithm for the Go Word document editor.
 //! It uses Unicode line breaking rules (UAX #14) to find break opportunities and
 //! integrates with the text shaping system for accurate glyph measurements.
 //!

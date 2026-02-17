@@ -459,6 +459,7 @@ export function usePageRenderCache(maxCachedPages: number = 10) {
   const markPageRendered = useCallback(
     (pageIndex: number) => {
       setRenderedPages((prev) => {
+        if (prev.has(pageIndex)) return prev; // No change — skip re-render
         const next = new Set(prev);
         next.add(pageIndex);
         return next;

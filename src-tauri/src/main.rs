@@ -1,4 +1,4 @@
-//! MS Word - Desktop word processor application
+//! Go Word - Desktop word processor application
 //!
 //! This is the main entry point for the Tauri desktop application.
 
@@ -12,6 +12,7 @@ mod state;
 mod template_commands;
 mod view_mode_commands;
 
+use commands::DocumentStore;
 use state::{CollaborationState, FontManagerState, MailMergeState, PerfMetricsState, RevisionStateWrapper, SettingsState, TemplateState, ViewModeState};
 use tauri::Manager;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
@@ -23,10 +24,11 @@ fn main() {
         .with(tracing_subscriber::EnvFilter::from_default_env())
         .init();
 
-    tracing::info!("Starting MS Word application");
+    tracing::info!("Starting Go Word application");
 
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
             // Initialize settings with app data directory
             let app_data_dir = app
@@ -82,6 +84,12 @@ fn main() {
             let mail_merge_state = MailMergeState::new();
             app.manage(mail_merge_state);
             tracing::info!("Mail merge state initialized");
+
+            // Initialize document store
+            tracing::info!("Initializing document store...");
+            let doc_store = DocumentStore::default();
+            app.manage(doc_store);
+            tracing::info!("Document store initialized");
 
             Ok(())
         })

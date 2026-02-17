@@ -1,4 +1,4 @@
-//! Charts - Chart import, rendering, and export for MS Word clone
+//! Charts - Chart import, rendering, and export for Go Word
 //!
 //! This crate provides support for:
 //! - Parsing DrawingML chart XML from DOCX packages

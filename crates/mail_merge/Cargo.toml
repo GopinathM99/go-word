@@ -2,7 +2,7 @@
 name = "mail_merge"
 version = "0.1.0"
 edition = "2021"
-description = "Mail merge data sources and field mapping for the MS Word clone"
+description = "Mail merge data sources and field mapping for Go Word"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
